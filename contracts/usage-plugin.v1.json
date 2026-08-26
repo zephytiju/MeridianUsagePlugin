@@ -1,0 +1,95 @@
+{
+  "$comment": "SPDX-License-Identifier: Apache-2.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://meridian.example/contracts/usage-plugin.v1.json",
+  "title": "Meridian Usage Plugin V1 compatibility evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "formatVersion",
+    "package",
+    "version",
+    "plugin",
+    "catalogs",
+    "apis",
+    "design",
+    "boundaries"
+  ],
+  "properties": {
+    "formatVersion": {"const": "meridian.usage.plugin.v1"},
+    "package": {"const": "meridian-plugin-usage"},
+    "version": {"const": "1.0.0"},
+    "plugin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "contract", "core"],
+      "properties": {
+        "id": {"const": "usage"},
+        "contract": {"const": "1.0.0"},
+        "core": {"const": "1.x"}
+      }
+    },
+    "catalogs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["owned", "used"],
+      "properties": {
+        "owned": {"const": []},
+        "used": {"const": ["structured"]}
+      }
+    },
+    "apis": {
+      "type": "array",
+      "prefixItems": [
+        {"const": "aggregation"},
+        {"const": "meter"},
+        {"const": "query"},
+        {"const": "recorder"},
+        {"const": "retention"}
+      ],
+      "items": false
+    },
+    "design": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "hldRevision",
+        "catalogRevision",
+        "adapterRevision",
+        "kafkaStreamingRevision",
+        "constructsRevision",
+        "usageLldRevision"
+      ],
+      "properties": {
+        "hldRevision": {"const": 56},
+        "catalogRevision": {"const": 70},
+        "adapterRevision": {"const": 24},
+        "kafkaStreamingRevision": {"const": 6},
+        "constructsRevision": {"const": 45},
+        "usageLldRevision": {"const": 18}
+      }
+    },
+    "boundaries": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "service",
+        "privateDatabase",
+        "engineSelection",
+        "engineProvisioning",
+        "credentials",
+        "nativeQuery",
+        "costOrPricing"
+      ],
+      "properties": {
+        "service": {"const": false},
+        "privateDatabase": {"const": false},
+        "engineSelection": {"const": false},
+        "engineProvisioning": {"const": false},
+        "credentials": {"const": false},
+        "nativeQuery": {"const": false},
+        "costOrPricing": {"const": false}
+      }
+    }
+  }
+}
