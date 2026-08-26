@@ -1,0 +1,40 @@
+{
+  "apis": [
+    "aggregation",
+    "meter",
+    "query",
+    "recorder",
+    "retention"
+  ],
+  "boundaries": {
+    "costOrPricing": false,
+    "credentials": false,
+    "engineProvisioning": false,
+    "engineSelection": false,
+    "nativeQuery": false,
+    "privateDatabase": false,
+    "service": false
+  },
+  "catalogs": {
+    "owned": [],
+    "used": [
+      "structured"
+    ]
+  },
+  "design": {
+    "adapterRevision": 24,
+    "catalogRevision": 70,
+    "constructsRevision": 45,
+    "hldRevision": 56,
+    "kafkaStreamingRevision": 6,
+    "usageLldRevision": 18
+  },
+  "formatVersion": "meridian.usage.plugin.v1",
+  "package": "meridian-plugin-usage",
+  "plugin": {
+    "contract": "1.0.0",
+    "core": "1.x",
+    "id": "usage"
+  },
+  "version": "1.0.0"
+}

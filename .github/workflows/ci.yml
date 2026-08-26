@@ -1,0 +1,90 @@
+# SPDX-License-Identifier: Apache-2.0
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Python ${{ matrix.python }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.12", "3.13", "3.14"]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - run: python -m pip install --disable-pip-version-check pip==26.2
+      - name: Install exact development dependencies
+        run: python -m pip install --disable-pip-version-check -e '.[test]'
+      - name: Verify source
+        run: |
+          ruff format --check .
+          ruff check .
+          mypy src
+      - name: Verify released contracts
+        run: python scripts/verify_contracts.py
+      - name: Run conformance tests
+        run: pytest
+
+  security:
+    name: Security
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - run: python -m pip install --disable-pip-version-check pip==26.2
+      - run: python -m pip install --disable-pip-version-check -e '.[test]'
+      - run: bandit -r src -c pyproject.toml
+      - run: pip-audit --skip-editable
+
+  package:
+    name: Package
+    needs: [test, security]
+    runs-on: ubuntu-latest
+    env:
+      SOURCE_DATE_EPOCH: "1787702400"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - run: python -m pip install --disable-pip-version-check pip==26.2
+      - run: python -m pip install --disable-pip-version-check -e '.[test]'
+      - name: Build twice
+        run: |
+          python -m build --no-isolation --outdir dist-a
+          python -m build --no-isolation --outdir dist-b
+      - name: Verify distributions
+        run: |
+          twine check dist-a/*
+          python scripts/verify_artifacts.py dist-a
+          python scripts/compare_artifacts.py dist-a dist-b
+          cd dist-a && sha256sum meridian_plugin_usage-* > SHA256SUMS
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: meridian-plugin-usage-1.0.0
+          path: dist-a/
+          if-no-files-found: error
+          retention-days: 30

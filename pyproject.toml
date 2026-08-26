@@ -1,0 +1,128 @@
+[build-system]
+requires = ["hatchling==1.27.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "meridian-plugin-usage"
+version = "1.0.0"
+description = "Meridian V1 immutable usage recording, querying, and aggregation plugin"
+readme = "README.md"
+requires-python = ">=3.12,<3.15"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+authors = [{name = "Meridian contributors"}]
+keywords = ["meridian", "usage", "metering", "opentelemetry", "aggregation"]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: Apache Software License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Typing :: Typed",
+]
+dependencies = [
+  "meridian-storage-core==1.0.0",
+  "meridian-storage-evidence==1.0.0",
+  "meridian-storage-query==1.0.0",
+  "meridian-storage-semantics==1.0.0",
+  "meridian-plugin-observability==1.0.0",
+]
+
+[project.optional-dependencies]
+test = [
+  "bandit[toml]==1.8.6",
+  "build==1.3.0",
+  "hatchling==1.27.0",
+  "jsonschema==4.25.1",
+  "meridian-storage-clickhouse==1.0.0",
+  "mypy==1.17.1",
+  "packaging==26.3",
+  "pip-audit==2.9.0",
+  "pytest==9.0.3",
+  "pytest-cov==6.2.1",
+  "ruff==0.12.10",
+  "twine==6.1.0",
+]
+
+[project.urls]
+Documentation = "https://github.com/zephytiju/meridian-plugin-usage#readme"
+Issues = "https://github.com/zephytiju/meridian-plugin-usage/issues"
+Repository = "https://github.com/zephytiju/meridian-plugin-usage"
+
+[project.entry-points."meridian_storage.plugins"]
+usage = "meridian_storage.plugins.usage.plugin:UsagePluginFactory"
+
+[project.entry-points."meridian_storage.schemas"]
+usage = "meridian_storage.plugins.usage.schema:UsageSchemaProvider"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/meridian_storage"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "/src",
+  "/tests",
+  "/contracts",
+  "/docs",
+  "/scripts",
+  "/.github",
+  "/CHANGELOG.md",
+  "/CODE_OF_CONDUCT.md",
+  "/CONTRIBUTING.md",
+  "/LICENSE",
+  "/NOTICE",
+  "/README.md",
+  "/SECURITY.md",
+  "/pyproject.toml",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+src = ["src", "tests", "scripts"]
+
+[tool.ruff.lint]
+select = ["A", "ARG", "B", "C4", "E", "F", "I", "N", "PERF", "PIE", "PL", "PT", "RUF", "S", "SIM", "T20", "UP", "W"]
+ignore = ["PLR0913", "PLR2004"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["PLR2004", "S101"]
+"scripts/**/*.py" = ["T201"]
+"src/meridian_storage/plugins/usage/errors.py" = ["N818"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+packages = ["meridian_storage.plugins.usage"]
+mypy_path = "src"
+warn_unreachable = true
+
+[tool.pytest.ini_options]
+addopts = "--strict-config --strict-markers --cov=meridian_storage.plugins.usage --cov-branch --cov-report=term-missing --cov-fail-under=85"
+testpaths = ["tests"]
+markers = [
+  "conformance: Usage LLD acceptance and deterministic golden tests",
+  "contract: released-contract compatibility tests",
+  "integration: multi-package integration tests",
+  "packaging: distribution and archive tests",
+]
+
+[tool.coverage.run]
+branch = true
+source = ["meridian_storage.plugins.usage"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
+exclude_also = [
+  "if TYPE_CHECKING:",
+  "raise AssertionError",
+  "if __name__ == .__main__.:",
+]
+
+[tool.bandit]
+exclude_dirs = ["tests"]
+skips = ["B101"]
