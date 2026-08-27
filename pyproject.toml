@@ -48,9 +48,9 @@ test = [
 ]
 
 [project.urls]
-Documentation = "https://github.com/zephytiju/meridian-plugin-usage#readme"
-Issues = "https://github.com/zephytiju/meridian-plugin-usage/issues"
-Repository = "https://github.com/zephytiju/meridian-plugin-usage"
+Documentation = "https://github.com/zephytiju/MeridianUsagePlugin#readme"
+Issues = "https://github.com/zephytiju/MeridianUsagePlugin/issues"
+Repository = "https://github.com/zephytiju/MeridianUsagePlugin"
 
 [project.entry-points."meridian_storage.plugins"]
 usage = "meridian_storage.plugins.usage.plugin:UsagePluginFactory"
