@@ -2,9 +2,15 @@
 
 All notable changes follow Semantic Versioning.
 
-## 1.0.1 - 2026-08-27
+## 1.0.2 - 2026-08-27
 
-- Correct the public distribution identity to `meridian-storage-plugin-usage`.
+- Restore the established PyPI distribution identity `meridian-plugin-usage`.
+- Supersede the GitHub-only 1.0.1 artifacts without creating a second PyPI project.
+- Lock conformance evidence to Usage LLD revision 22.
+
+## 1.0.1 - 2026-08-27 (GitHub-only; not published to PyPI)
+
+- Attempt the distribution rename to `meridian-storage-plugin-usage`; superseded by 1.0.2.
 - Preserve the `meridian_storage.plugins.usage` import namespace and plugin/schema entry points.
 - Lock conformance evidence to Usage LLD revision 19.
 

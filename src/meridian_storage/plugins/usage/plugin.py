@@ -77,7 +77,7 @@ class UsagePluginFactory:
             plugin_contract_version="1.0.0",
             core_contract="1.x",
             extensions={
-                "distribution": "meridian-storage-plugin-usage",
+                "distribution": "meridian-plugin-usage",
                 "catalog": "structured",
                 "service": "false",
                 "privateDatabase": "false",

@@ -17,8 +17,8 @@
   ],
   "properties": {
     "formatVersion": {"const": "meridian.usage.plugin.v1"},
-    "package": {"const": "meridian-storage-plugin-usage"},
-    "version": {"const": "1.0.1"},
+    "package": {"const": "meridian-plugin-usage"},
+    "version": {"const": "1.0.2"},
     "plugin": {
       "type": "object",
       "additionalProperties": false,
@@ -66,7 +66,7 @@
         "adapterRevision": {"const": 24},
         "kafkaStreamingRevision": {"const": 6},
         "constructsRevision": {"const": 45},
-        "usageLldRevision": {"const": 19}
+        "usageLldRevision": {"const": 22}
       }
     },
     "boundaries": {
