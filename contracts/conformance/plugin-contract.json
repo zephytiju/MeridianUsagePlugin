@@ -27,14 +27,14 @@
     "constructsRevision": 45,
     "hldRevision": 56,
     "kafkaStreamingRevision": 6,
-    "usageLldRevision": 18
+    "usageLldRevision": 19
   },
   "formatVersion": "meridian.usage.plugin.v1",
-  "package": "meridian-plugin-usage",
+  "package": "meridian-storage-plugin-usage",
   "plugin": {
     "contract": "1.0.0",
     "core": "1.x",
     "id": "usage"
   },
-  "version": "1.0.0"
+  "version": "1.0.1"
 }

@@ -1,4 +1,4 @@
-# meridian-plugin-usage
+# meridian-storage-plugin-usage
 
 Meridian V1's open-source Usage plugin provides immutable metering events,
 exact unit normalization, bounded queries, deterministic window aggregation,
@@ -13,7 +13,7 @@ Meridian Expressions.
 ## Install
 
 ```console
-python -m pip install meridian-plugin-usage==1.0.0
+python -m pip install meridian-storage-plugin-usage==1.0.1
 ```
 
 Python 3.12, 3.13, and 3.14 are supported. Runtime Meridian dependencies are
@@ -118,4 +118,3 @@ See [architecture](docs/architecture.md), [recording](docs/recording.md),
 [compatibility](docs/compatibility.md), and [conformance](docs/conformance.md).
 
 Licensed under the Apache License, Version 2.0.
-

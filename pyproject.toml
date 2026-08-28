@@ -3,8 +3,8 @@ requires = ["hatchling==1.27.0"]
 build-backend = "hatchling.build"
 
 [project]
-name = "meridian-plugin-usage"
-version = "1.0.0"
+name = "meridian-storage-plugin-usage"
+version = "1.0.1"
 description = "Meridian V1 immutable usage recording, querying, and aggregation plugin"
 readme = "README.md"
 requires-python = ">=3.12,<3.15"
