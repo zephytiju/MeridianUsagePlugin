@@ -1,6 +1,6 @@
 # Compatibility
 
-Version 1.0.1 is tested on Python 3.12 through 3.14 against these exact public
+Version 1.0.2 is tested on Python 3.12 through 3.14 against these exact public
 releases:
 
 | Distribution | Version |
@@ -23,8 +23,8 @@ Locked design evidence:
 | Engine Adapters | 24 |
 | Kafka Streaming LLD | 6 |
 | MeridianConstructs | 45 |
-| Usage LLD | 19 |
+| Usage LLD | 22 |
 
-The authoritative Usage LLD establishes the public distribution name
-`meridian-storage-plugin-usage`. The stable import namespace remains
+The authoritative Usage LLD retains the public distribution name
+`meridian-plugin-usage`. The stable import namespace remains
 `meridian_storage.plugins.usage`.

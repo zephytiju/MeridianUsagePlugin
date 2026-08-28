@@ -361,7 +361,7 @@ class UsageSchemaProvider:
             schemas=definitions,
             resources=logical_resources,
             extensions={
-                "distribution": "meridian-storage-plugin-usage",
+                "distribution": "meridian-plugin-usage",
                 "catalogsOwned": [],
                 "catalogsUsed": ["structured"],
                 "design": {
@@ -370,7 +370,7 @@ class UsageSchemaProvider:
                     "adapterRevision": 24,
                     "kafkaStreamingRevision": 6,
                     "constructsRevision": 45,
-                    "usageLldRevision": 19,
+                    "usageLldRevision": 22,
                 },
             },
         )

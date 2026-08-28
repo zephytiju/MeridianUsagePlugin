@@ -40,7 +40,7 @@ def test_built_distribution_has_one_package_and_complete_metadata(tmp_path: Path
     )
     evidence = json.loads(process.stdout)
     assert evidence["status"] == "passed"
-    assert evidence["package"] == "meridian-storage-plugin-usage"
+    assert evidence["package"] == "meridian-plugin-usage"
     assert {item["file"].split("-", 1)[0] for item in evidence["artifacts"]} == {
-        "meridian_storage_plugin_usage"
+        "meridian_plugin_usage"
     }
