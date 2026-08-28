@@ -21,10 +21,10 @@ from meridian_storage.semantics import StructuredCatalogProvider, StructuredCata
 
 
 def test_distribution_uses_only_exact_released_runtime_contracts() -> None:
-    assert version("meridian-plugin-usage") == "1.0.0"
-    project = metadata("meridian-plugin-usage")
+    assert version("meridian-storage-plugin-usage") == "1.0.1"
+    project = metadata("meridian-storage-plugin-usage")
     assert project["License-Expression"] == "Apache-2.0"
-    dependencies = requires("meridian-plugin-usage") or []
+    dependencies = requires("meridian-storage-plugin-usage") or []
     runtime = {item for item in dependencies if "extra ==" not in item}
     assert runtime == {
         "meridian-plugin-observability==1.0.0",

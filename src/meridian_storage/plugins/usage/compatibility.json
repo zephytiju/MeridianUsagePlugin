@@ -1,8 +1,8 @@
 {
   "$comment": "SPDX-License-Identifier: Apache-2.0",
   "formatVersion": "meridian.usage.compatibility.v1",
-  "package": "meridian-plugin-usage",
-  "version": "1.0.0",
+  "package": "meridian-storage-plugin-usage",
+  "version": "1.0.1",
   "python": ">=3.12,<3.15",
   "contracts": {
     "core": "1.0.0",
@@ -21,7 +21,7 @@
     "adapterRevision": 24,
     "kafkaStreamingRevision": 6,
     "constructsRevision": 45,
-    "usageLldRevision": 18
+    "usageLldRevision": 19
   },
   "boundaries": {
     "service": false,

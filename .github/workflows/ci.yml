@@ -81,10 +81,10 @@ jobs:
           twine check dist-a/*
           python scripts/verify_artifacts.py dist-a
           python scripts/compare_artifacts.py dist-a dist-b
-          cd dist-a && sha256sum meridian_plugin_usage-* > SHA256SUMS
+          cd dist-a && sha256sum meridian_storage_plugin_usage-* > SHA256SUMS
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: meridian-plugin-usage-1.0.0
+          name: meridian-storage-plugin-usage-1.0.1
           path: dist-a/
           if-no-files-found: error
           retention-days: 30
