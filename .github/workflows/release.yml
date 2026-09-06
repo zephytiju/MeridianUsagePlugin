@@ -21,7 +21,18 @@ jobs:
   build:
     name: Build release
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgis/postgis@sha256:44126d872ac91993766c341e369c539e8196614321765d36a6f1bab0419a5fa5
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: usage_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d usage_test"
+          --health-interval 5s --health-timeout 5s --health-retries 12
     env:
+      USAGE_TEST_POSTGRES_DSN: postgresql://postgres:postgres@127.0.0.1:5432/usage_test
       SOURCE_DATE_EPOCH: "1787702400"
     steps:
       - name: Validate release tag

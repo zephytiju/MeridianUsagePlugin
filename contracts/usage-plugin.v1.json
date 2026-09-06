@@ -18,7 +18,7 @@
   "properties": {
     "formatVersion": {"const": "meridian.usage.plugin.v1"},
     "package": {"const": "meridian-plugin-usage"},
-    "version": {"const": "1.0.2"},
+    "version": {"const": "1.0.3"},
     "plugin": {
       "type": "object",
       "additionalProperties": false,

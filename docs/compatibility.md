@@ -1,6 +1,6 @@
 # Compatibility
 
-Version 1.0.2 is tested on Python 3.12 through 3.14 against these exact public
+Version 1.0.3 is tested on Python 3.12 through 3.14 against these exact public
 releases:
 
 | Distribution | Version |

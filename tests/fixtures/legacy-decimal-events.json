@@ -1,0 +1,879 @@
+{
+  "provenance": "Real PostgreSQL reproduction: Cost 1.0.0 + Usage 1.0.0; independently identical cases from Usage 1.0.2 without Cost.",
+  "cases": [
+    {
+      "name": "default12-input0",
+      "meter": {
+        "schemaVersion": "1.0.0",
+        "meterId": "test.requests",
+        "meterVersion": 1,
+        "quantity": "requests",
+        "canonicalUnit": "request",
+        "transforms": {
+          "request": {
+            "scale": "1",
+            "offset": "0"
+          }
+        },
+        "dimensions": [],
+        "precision": 38,
+        "scale": 12,
+        "eventTimeToleranceSeconds": 0,
+        "activeFrom": "1970-01-01T00:00:00Z",
+        "retiredAt": null,
+        "description": null,
+        "fingerprint": "sha256:61a5de6e73ea82e0fe81130b4d93b5e5c90335f075e1826645b4135cb5b9c560"
+      },
+      "input": {
+        "schemaVersion": "1.0.0",
+        "eventId": "default12-input0",
+        "idempotencyKey": "sha256:f86317ff77c4776d2ab4e5d8a41dca45e5a14a6c19595e73cc99d71e4ddab598",
+        "scope": {
+          "runtime": "decimal-test",
+          "tenant": "synthetic"
+        },
+        "scopeFingerprint": "sha256:eb9c1fcab218b5354344ee3db51b74d7eeb5e7a7ca1ea84352ebc5621dd78c9a",
+        "subjectId": "subject",
+        "meterId": "test.requests",
+        "meterVersion": 1,
+        "windowStart": "2026-09-05T11:59:00Z",
+        "windowEnd": "2026-09-05T12:00:00Z",
+        "value": "12",
+        "unit": "request",
+        "dimensions": {},
+        "dimensionFingerprint": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "source": "application",
+        "recordedAt": "2026-09-05T12:00:00Z",
+        "correctionOf": null,
+        "correctionReason": null,
+        "correlation": {
+          "requestId": "decimal-test"
+        },
+        "provenance": {},
+        "originalValue": null,
+        "originalUnit": null,
+        "fingerprint": "sha256:49d4af9e32c119d2170b2a4ab367f96b38193aa8b4706541730ee86ed389371d"
+      },
+      "normalized": {
+        "schemaVersion": "1.0.0",
+        "eventId": "default12-input0",
+        "idempotencyKey": "sha256:f86317ff77c4776d2ab4e5d8a41dca45e5a14a6c19595e73cc99d71e4ddab598",
+        "scope": {
+          "runtime": "decimal-test",
+          "tenant": "synthetic"
+        },
+        "scopeFingerprint": "sha256:eb9c1fcab218b5354344ee3db51b74d7eeb5e7a7ca1ea84352ebc5621dd78c9a",
+        "subjectId": "subject",
+        "meterId": "test.requests",
+        "meterVersion": 1,
+        "windowStart": "2026-09-05T11:59:00Z",
+        "windowEnd": "2026-09-05T12:00:00Z",
+        "value": "12.000000000000",
+        "unit": "request",
+        "dimensions": {},
+        "dimensionFingerprint": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "source": "application",
+        "recordedAt": "2026-09-05T12:00:00Z",
+        "correctionOf": null,
+        "correctionReason": null,
+        "correlation": {
+          "requestId": "decimal-test"
+        },
+        "provenance": {},
+        "originalValue": "12",
+        "originalUnit": "request",
+        "fingerprint": "sha256:c58ed717b6ae6155f459ee2fa77e33386000fd6070713f74457156b9251b4b5f"
+      },
+      "legacyReadbackFingerprint": "sha256:bd82294c061fa988e587dceefa3bdc383f9df7abac723521e4403e03b10651ec",
+      "legacyFingerprintEqual": false,
+      "legacyReplay": "UsageConflict"
+    },
+    {
+      "name": "default12-input12",
+      "meter": {
+        "schemaVersion": "1.0.0",
+        "meterId": "test.requests",
+        "meterVersion": 1,
+        "quantity": "requests",
+        "canonicalUnit": "request",
+        "transforms": {
+          "request": {
+            "scale": "1",
+            "offset": "0"
+          }
+        },
+        "dimensions": [],
+        "precision": 38,
+        "scale": 12,
+        "eventTimeToleranceSeconds": 0,
+        "activeFrom": "1970-01-01T00:00:00Z",
+        "retiredAt": null,
+        "description": null,
+        "fingerprint": "sha256:61a5de6e73ea82e0fe81130b4d93b5e5c90335f075e1826645b4135cb5b9c560"
+      },
+      "input": {
+        "schemaVersion": "1.0.0",
+        "eventId": "default12-input12",
+        "idempotencyKey": "sha256:898b68e76b4aa36ca1d655a0362c23539604e36da07bedeacd170503914dd7cb",
+        "scope": {
+          "runtime": "decimal-test",
+          "tenant": "synthetic"
+        },
+        "scopeFingerprint": "sha256:eb9c1fcab218b5354344ee3db51b74d7eeb5e7a7ca1ea84352ebc5621dd78c9a",
+        "subjectId": "subject",
+        "meterId": "test.requests",
+        "meterVersion": 1,
+        "windowStart": "2026-09-05T11:59:00Z",
+        "windowEnd": "2026-09-05T12:00:00Z",
+        "value": "12.000000000000",
+        "unit": "request",
+        "dimensions": {},
+        "dimensionFingerprint": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "source": "application",
+        "recordedAt": "2026-09-05T12:00:00Z",
+        "correctionOf": null,
+        "correctionReason": null,
+        "correlation": {
+          "requestId": "decimal-test"
+        },
+        "provenance": {},
+        "originalValue": null,
+        "originalUnit": null,
+        "fingerprint": "sha256:a1e31e05918da4d7363b5f233a69fba580a6a08689fb774553d11e75f1e4c21a"
+      },
+      "normalized": {
+        "schemaVersion": "1.0.0",
+        "eventId": "default12-input12",
+        "idempotencyKey": "sha256:898b68e76b4aa36ca1d655a0362c23539604e36da07bedeacd170503914dd7cb",
+        "scope": {
+          "runtime": "decimal-test",
+          "tenant": "synthetic"
+        },
+        "scopeFingerprint": "sha256:eb9c1fcab218b5354344ee3db51b74d7eeb5e7a7ca1ea84352ebc5621dd78c9a",
+        "subjectId": "subject",
+        "meterId": "test.requests",
+        "meterVersion": 1,
+        "windowStart": "2026-09-05T11:59:00Z",
+        "windowEnd": "2026-09-05T12:00:00Z",
+        "value": "12.000000000000",
+        "unit": "request",
+        "dimensions": {},
+        "dimensionFingerprint": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "source": "application",
+        "recordedAt": "2026-09-05T12:00:00Z",
+        "correctionOf": null,
+        "correctionReason": null,
+        "correlation": {
+          "requestId": "decimal-test"
+        },
+        "provenance": {},
+        "originalValue": "12.000000000000",
+        "originalUnit": "request",
+        "fingerprint": "sha256:19f17645a1fa7daa300a1c528e918811ce65d91ea5f0d32e0570751d9a3c4e99"
+      },
+      "legacyReadbackFingerprint": "sha256:a7f9d85a864713fecda3d0e3dcd52488b098f0d3767f0129146629a869f176e7",
+      "legacyFingerprintEqual": false,
+      "legacyReplay": "UsageConflict"
+    },
+    {
+      "name": "default12-input18",
+      "meter": {
+        "schemaVersion": "1.0.0",
+        "meterId": "test.requests",
+        "meterVersion": 1,
+        "quantity": "requests",
+        "canonicalUnit": "request",
+        "transforms": {
+          "request": {
+            "scale": "1",
+            "offset": "0"
+          }
+        },
+        "dimensions": [],
+        "precision": 38,
+        "scale": 12,
+        "eventTimeToleranceSeconds": 0,
+        "activeFrom": "1970-01-01T00:00:00Z",
+        "retiredAt": null,
+        "description": null,
+        "fingerprint": "sha256:61a5de6e73ea82e0fe81130b4d93b5e5c90335f075e1826645b4135cb5b9c560"
+      },
+      "input": {
+        "schemaVersion": "1.0.0",
+        "eventId": "default12-input18",
+        "idempotencyKey": "sha256:58ad52726335c2a6fb7a8de22e863f9060c2d104f67b8b15cf91cbf0610d2ffe",
+        "scope": {
+          "runtime": "decimal-test",
+          "tenant": "synthetic"
+        },
+        "scopeFingerprint": "sha256:eb9c1fcab218b5354344ee3db51b74d7eeb5e7a7ca1ea84352ebc5621dd78c9a",
+        "subjectId": "subject",
+        "meterId": "test.requests",
+        "meterVersion": 1,
+        "windowStart": "2026-09-05T11:59:00Z",
+        "windowEnd": "2026-09-05T12:00:00Z",
+        "value": "12.000000000000000000",
+        "unit": "request",
+        "dimensions": {},
+        "dimensionFingerprint": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "source": "application",
+        "recordedAt": "2026-09-05T12:00:00Z",
+        "correctionOf": null,
+        "correctionReason": null,
+        "correlation": {
+          "requestId": "decimal-test"
+        },
+        "provenance": {},
+        "originalValue": null,
+        "originalUnit": null,
+        "fingerprint": "sha256:865b2a6f544f84729314314adc99c7307d3f4077f6748c976a0c08672d611835"
+      },
+      "normalized": {
+        "schemaVersion": "1.0.0",
+        "eventId": "default12-input18",
+        "idempotencyKey": "sha256:58ad52726335c2a6fb7a8de22e863f9060c2d104f67b8b15cf91cbf0610d2ffe",
+        "scope": {
+          "runtime": "decimal-test",
+          "tenant": "synthetic"
+        },
+        "scopeFingerprint": "sha256:eb9c1fcab218b5354344ee3db51b74d7eeb5e7a7ca1ea84352ebc5621dd78c9a",
+        "subjectId": "subject",
+        "meterId": "test.requests",
+        "meterVersion": 1,
+        "windowStart": "2026-09-05T11:59:00Z",
+        "windowEnd": "2026-09-05T12:00:00Z",
+        "value": "12.000000000000",
+        "unit": "request",
+        "dimensions": {},
+        "dimensionFingerprint": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "source": "application",
+        "recordedAt": "2026-09-05T12:00:00Z",
+        "correctionOf": null,
+        "correctionReason": null,
+        "correlation": {
+          "requestId": "decimal-test"
+        },
+        "provenance": {},
+        "originalValue": "12.000000000000000000",
+        "originalUnit": "request",
+        "fingerprint": "sha256:1de34e1072f2f4a247b41c3baeb911cdd924cfe6b298dd850b72c9c83e44fa8b"
+      },
+      "legacyReadbackFingerprint": "sha256:ad4c7ab3263a68d8fe41f42657f1682eb487bbffe4f1182ed5b217b0c2508ac5",
+      "legacyFingerprintEqual": false,
+      "legacyReplay": "UsageConflict"
+    },
+    {
+      "name": "scale18-input12",
+      "meter": {
+        "schemaVersion": "1.0.0",
+        "meterId": "test.requests",
+        "meterVersion": 1,
+        "quantity": "requests",
+        "canonicalUnit": "request",
+        "transforms": {
+          "request": {
+            "scale": "1",
+            "offset": "0"
+          }
+        },
+        "dimensions": [],
+        "precision": 76,
+        "scale": 18,
+        "eventTimeToleranceSeconds": 0,
+        "activeFrom": "1970-01-01T00:00:00Z",
+        "retiredAt": null,
+        "description": null,
+        "fingerprint": "sha256:bdf7e8404fcc970b16699ef08d6dc6676ba4e1784f6e8d54aa0f6bd9d215e476"
+      },
+      "input": {
+        "schemaVersion": "1.0.0",
+        "eventId": "scale18-input12",
+        "idempotencyKey": "sha256:e1193e68aa1c2ed0527b1e9ae93285d3e19cc6dabe11607403b6520c6a9004ce",
+        "scope": {
+          "runtime": "decimal-test",
+          "tenant": "synthetic"
+        },
+        "scopeFingerprint": "sha256:eb9c1fcab218b5354344ee3db51b74d7eeb5e7a7ca1ea84352ebc5621dd78c9a",
+        "subjectId": "subject",
+        "meterId": "test.requests",
+        "meterVersion": 1,
+        "windowStart": "2026-09-05T11:59:00Z",
+        "windowEnd": "2026-09-05T12:00:00Z",
+        "value": "12.000000000000",
+        "unit": "request",
+        "dimensions": {},
+        "dimensionFingerprint": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "source": "application",
+        "recordedAt": "2026-09-05T12:00:00Z",
+        "correctionOf": null,
+        "correctionReason": null,
+        "correlation": {
+          "requestId": "decimal-test"
+        },
+        "provenance": {},
+        "originalValue": null,
+        "originalUnit": null,
+        "fingerprint": "sha256:5aab099b776ee7ce57dfb5a306ce660ec32979b5162b39725192c9d5739d78b0"
+      },
+      "normalized": {
+        "schemaVersion": "1.0.0",
+        "eventId": "scale18-input12",
+        "idempotencyKey": "sha256:e1193e68aa1c2ed0527b1e9ae93285d3e19cc6dabe11607403b6520c6a9004ce",
+        "scope": {
+          "runtime": "decimal-test",
+          "tenant": "synthetic"
+        },
+        "scopeFingerprint": "sha256:eb9c1fcab218b5354344ee3db51b74d7eeb5e7a7ca1ea84352ebc5621dd78c9a",
+        "subjectId": "subject",
+        "meterId": "test.requests",
+        "meterVersion": 1,
+        "windowStart": "2026-09-05T11:59:00Z",
+        "windowEnd": "2026-09-05T12:00:00Z",
+        "value": "12.000000000000000000",
+        "unit": "request",
+        "dimensions": {},
+        "dimensionFingerprint": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "source": "application",
+        "recordedAt": "2026-09-05T12:00:00Z",
+        "correctionOf": null,
+        "correctionReason": null,
+        "correlation": {
+          "requestId": "decimal-test"
+        },
+        "provenance": {},
+        "originalValue": "12.000000000000",
+        "originalUnit": "request",
+        "fingerprint": "sha256:a5820a8cc83be2045bb2f294d77c63f12a1cac56e366f3eaa765f180fcf69b1a"
+      },
+      "legacyReadbackFingerprint": "sha256:67458b325aab56e1ab06e9f94f4d3a1100add7d956a4e18162c98b899512e650",
+      "legacyFingerprintEqual": false,
+      "legacyReplay": "UsageConflict"
+    },
+    {
+      "name": "scale18-input18-control",
+      "meter": {
+        "schemaVersion": "1.0.0",
+        "meterId": "test.requests",
+        "meterVersion": 1,
+        "quantity": "requests",
+        "canonicalUnit": "request",
+        "transforms": {
+          "request": {
+            "scale": "1",
+            "offset": "0"
+          }
+        },
+        "dimensions": [],
+        "precision": 76,
+        "scale": 18,
+        "eventTimeToleranceSeconds": 0,
+        "activeFrom": "1970-01-01T00:00:00Z",
+        "retiredAt": null,
+        "description": null,
+        "fingerprint": "sha256:bdf7e8404fcc970b16699ef08d6dc6676ba4e1784f6e8d54aa0f6bd9d215e476"
+      },
+      "input": {
+        "schemaVersion": "1.0.0",
+        "eventId": "scale18-input18-control",
+        "idempotencyKey": "sha256:53619d9cff48a15de134a6d68ed54178b3a4ec03941da4a832d65c25e2b39da1",
+        "scope": {
+          "runtime": "decimal-test",
+          "tenant": "synthetic"
+        },
+        "scopeFingerprint": "sha256:eb9c1fcab218b5354344ee3db51b74d7eeb5e7a7ca1ea84352ebc5621dd78c9a",
+        "subjectId": "subject",
+        "meterId": "test.requests",
+        "meterVersion": 1,
+        "windowStart": "2026-09-05T11:59:00Z",
+        "windowEnd": "2026-09-05T12:00:00Z",
+        "value": "12.000000000000000000",
+        "unit": "request",
+        "dimensions": {},
+        "dimensionFingerprint": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "source": "application",
+        "recordedAt": "2026-09-05T12:00:00Z",
+        "correctionOf": null,
+        "correctionReason": null,
+        "correlation": {
+          "requestId": "decimal-test"
+        },
+        "provenance": {},
+        "originalValue": null,
+        "originalUnit": null,
+        "fingerprint": "sha256:9f58141de70fee784faf5d220386eb2c77f36cc9222f1eead60ce62ef6ba08bb"
+      },
+      "normalized": {
+        "schemaVersion": "1.0.0",
+        "eventId": "scale18-input18-control",
+        "idempotencyKey": "sha256:53619d9cff48a15de134a6d68ed54178b3a4ec03941da4a832d65c25e2b39da1",
+        "scope": {
+          "runtime": "decimal-test",
+          "tenant": "synthetic"
+        },
+        "scopeFingerprint": "sha256:eb9c1fcab218b5354344ee3db51b74d7eeb5e7a7ca1ea84352ebc5621dd78c9a",
+        "subjectId": "subject",
+        "meterId": "test.requests",
+        "meterVersion": 1,
+        "windowStart": "2026-09-05T11:59:00Z",
+        "windowEnd": "2026-09-05T12:00:00Z",
+        "value": "12.000000000000000000",
+        "unit": "request",
+        "dimensions": {},
+        "dimensionFingerprint": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "source": "application",
+        "recordedAt": "2026-09-05T12:00:00Z",
+        "correctionOf": null,
+        "correctionReason": null,
+        "correlation": {
+          "requestId": "decimal-test"
+        },
+        "provenance": {},
+        "originalValue": "12.000000000000000000",
+        "originalUnit": "request",
+        "fingerprint": "sha256:e7d9e87b58b49ab4a9eb64d373ac3388493459452343cbeac6becb75e1355121"
+      },
+      "legacyReadbackFingerprint": "sha256:e7d9e87b58b49ab4a9eb64d373ac3388493459452343cbeac6becb75e1355121",
+      "legacyFingerprintEqual": true,
+      "legacyReplay": "replayed"
+    },
+    {
+      "name": "zero",
+      "meter": {
+        "schemaVersion": "1.0.0",
+        "meterId": "test.requests",
+        "meterVersion": 1,
+        "quantity": "requests",
+        "canonicalUnit": "request",
+        "transforms": {
+          "request": {
+            "scale": "1",
+            "offset": "0"
+          }
+        },
+        "dimensions": [],
+        "precision": 38,
+        "scale": 12,
+        "eventTimeToleranceSeconds": 0,
+        "activeFrom": "1970-01-01T00:00:00Z",
+        "retiredAt": null,
+        "description": null,
+        "fingerprint": "sha256:61a5de6e73ea82e0fe81130b4d93b5e5c90335f075e1826645b4135cb5b9c560"
+      },
+      "input": {
+        "schemaVersion": "1.0.0",
+        "eventId": "zero",
+        "idempotencyKey": "sha256:da217cdd0ffa1dc552f9304b28d1c04d75275a7640bc4de9f0f492e713407b98",
+        "scope": {
+          "runtime": "decimal-test",
+          "tenant": "synthetic"
+        },
+        "scopeFingerprint": "sha256:eb9c1fcab218b5354344ee3db51b74d7eeb5e7a7ca1ea84352ebc5621dd78c9a",
+        "subjectId": "subject",
+        "meterId": "test.requests",
+        "meterVersion": 1,
+        "windowStart": "2026-09-05T11:59:00Z",
+        "windowEnd": "2026-09-05T12:00:00Z",
+        "value": "0",
+        "unit": "request",
+        "dimensions": {},
+        "dimensionFingerprint": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "source": "application",
+        "recordedAt": "2026-09-05T12:00:00Z",
+        "correctionOf": null,
+        "correctionReason": null,
+        "correlation": {
+          "requestId": "decimal-test"
+        },
+        "provenance": {},
+        "originalValue": null,
+        "originalUnit": null,
+        "fingerprint": "sha256:dae4b77cdbd4a7457db12d5cb48121aa9d91853b6086c65ec87fe5cbabb66f12"
+      },
+      "normalized": {
+        "schemaVersion": "1.0.0",
+        "eventId": "zero",
+        "idempotencyKey": "sha256:da217cdd0ffa1dc552f9304b28d1c04d75275a7640bc4de9f0f492e713407b98",
+        "scope": {
+          "runtime": "decimal-test",
+          "tenant": "synthetic"
+        },
+        "scopeFingerprint": "sha256:eb9c1fcab218b5354344ee3db51b74d7eeb5e7a7ca1ea84352ebc5621dd78c9a",
+        "subjectId": "subject",
+        "meterId": "test.requests",
+        "meterVersion": 1,
+        "windowStart": "2026-09-05T11:59:00Z",
+        "windowEnd": "2026-09-05T12:00:00Z",
+        "value": "0",
+        "unit": "request",
+        "dimensions": {},
+        "dimensionFingerprint": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "source": "application",
+        "recordedAt": "2026-09-05T12:00:00Z",
+        "correctionOf": null,
+        "correctionReason": null,
+        "correlation": {
+          "requestId": "decimal-test"
+        },
+        "provenance": {},
+        "originalValue": "0",
+        "originalUnit": "request",
+        "fingerprint": "sha256:28995d567458ab6080c32d5fde216d2ae15713d8035efd4906eb6cf69360b7ab"
+      },
+      "legacyReadbackFingerprint": "sha256:28995d567458ab6080c32d5fde216d2ae15713d8035efd4906eb6cf69360b7ab",
+      "legacyFingerprintEqual": true,
+      "legacyReplay": "replayed"
+    },
+    {
+      "name": "exact-conversion",
+      "meter": {
+        "schemaVersion": "1.0.0",
+        "meterId": "test.requests",
+        "meterVersion": 1,
+        "quantity": "requests",
+        "canonicalUnit": "request",
+        "transforms": {
+          "input": {
+            "scale": "0.001",
+            "offset": "0"
+          },
+          "request": {
+            "scale": "1",
+            "offset": "0"
+          }
+        },
+        "dimensions": [],
+        "precision": 38,
+        "scale": 12,
+        "eventTimeToleranceSeconds": 0,
+        "activeFrom": "1970-01-01T00:00:00Z",
+        "retiredAt": null,
+        "description": null,
+        "fingerprint": "sha256:265fbc9f86e4e0f56d3fafd503da2f08c6467d016966eb4fd9f1035fb92e1037"
+      },
+      "input": {
+        "schemaVersion": "1.0.0",
+        "eventId": "exact-conversion",
+        "idempotencyKey": "sha256:0072488d61f3d68b6418ce6746d9144e22f33d4c72bb0571d9c613e33b61fb12",
+        "scope": {
+          "runtime": "decimal-test",
+          "tenant": "synthetic"
+        },
+        "scopeFingerprint": "sha256:eb9c1fcab218b5354344ee3db51b74d7eeb5e7a7ca1ea84352ebc5621dd78c9a",
+        "subjectId": "subject",
+        "meterId": "test.requests",
+        "meterVersion": 1,
+        "windowStart": "2026-09-05T11:59:00Z",
+        "windowEnd": "2026-09-05T12:00:00Z",
+        "value": "12000.000",
+        "unit": "input",
+        "dimensions": {},
+        "dimensionFingerprint": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "source": "application",
+        "recordedAt": "2026-09-05T12:00:00Z",
+        "correctionOf": null,
+        "correctionReason": null,
+        "correlation": {
+          "requestId": "decimal-test"
+        },
+        "provenance": {},
+        "originalValue": null,
+        "originalUnit": null,
+        "fingerprint": "sha256:08add0a8c88cdc2a461e63396317d844e1f0bde97e64f2e785e650c1348ebbad"
+      },
+      "normalized": {
+        "schemaVersion": "1.0.0",
+        "eventId": "exact-conversion",
+        "idempotencyKey": "sha256:0072488d61f3d68b6418ce6746d9144e22f33d4c72bb0571d9c613e33b61fb12",
+        "scope": {
+          "runtime": "decimal-test",
+          "tenant": "synthetic"
+        },
+        "scopeFingerprint": "sha256:eb9c1fcab218b5354344ee3db51b74d7eeb5e7a7ca1ea84352ebc5621dd78c9a",
+        "subjectId": "subject",
+        "meterId": "test.requests",
+        "meterVersion": 1,
+        "windowStart": "2026-09-05T11:59:00Z",
+        "windowEnd": "2026-09-05T12:00:00Z",
+        "value": "12.000000000000",
+        "unit": "request",
+        "dimensions": {},
+        "dimensionFingerprint": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "source": "application",
+        "recordedAt": "2026-09-05T12:00:00Z",
+        "correctionOf": null,
+        "correctionReason": null,
+        "correlation": {
+          "requestId": "decimal-test"
+        },
+        "provenance": {},
+        "originalValue": "12000.000",
+        "originalUnit": "input",
+        "fingerprint": "sha256:35123eb1a0ccb8e7c1b6d189be6b3af50e3d19d7c39dcc677f79eca040e512ab"
+      },
+      "legacyReadbackFingerprint": "sha256:988e30af7ca5aae0007638e1e1368b8e3d2769d014207eaf81e503c479f91ff8",
+      "legacyFingerprintEqual": false,
+      "legacyReplay": "UsageConflict"
+    },
+    {
+      "name": "scale0",
+      "meter": {
+        "schemaVersion": "1.0.0",
+        "meterId": "test.requests",
+        "meterVersion": 1,
+        "quantity": "requests",
+        "canonicalUnit": "request",
+        "transforms": {
+          "request": {
+            "scale": "1",
+            "offset": "0"
+          }
+        },
+        "dimensions": [],
+        "precision": 38,
+        "scale": 0,
+        "eventTimeToleranceSeconds": 0,
+        "activeFrom": "1970-01-01T00:00:00Z",
+        "retiredAt": null,
+        "description": null,
+        "fingerprint": "sha256:02b09da66cbdbf708db988b32f1b38bba69f6956914b8d5b508cc0f3c752dc6d"
+      },
+      "input": {
+        "schemaVersion": "1.0.0",
+        "eventId": "scale0",
+        "idempotencyKey": "sha256:055b5325f8df16b1b9bec02dc747f72ca0f4f91ed47cba2696a8351abd9b6e88",
+        "scope": {
+          "runtime": "decimal-test",
+          "tenant": "synthetic"
+        },
+        "scopeFingerprint": "sha256:eb9c1fcab218b5354344ee3db51b74d7eeb5e7a7ca1ea84352ebc5621dd78c9a",
+        "subjectId": "subject",
+        "meterId": "test.requests",
+        "meterVersion": 1,
+        "windowStart": "2026-09-05T11:59:00Z",
+        "windowEnd": "2026-09-05T12:00:00Z",
+        "value": "12.00",
+        "unit": "request",
+        "dimensions": {},
+        "dimensionFingerprint": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "source": "application",
+        "recordedAt": "2026-09-05T12:00:00Z",
+        "correctionOf": null,
+        "correctionReason": null,
+        "correlation": {
+          "requestId": "decimal-test"
+        },
+        "provenance": {},
+        "originalValue": null,
+        "originalUnit": null,
+        "fingerprint": "sha256:c37310a6bf1c58c24092d81d539924ea50b66bf21b2b83d44e35d98309a0dcbd"
+      },
+      "normalized": {
+        "schemaVersion": "1.0.0",
+        "eventId": "scale0",
+        "idempotencyKey": "sha256:055b5325f8df16b1b9bec02dc747f72ca0f4f91ed47cba2696a8351abd9b6e88",
+        "scope": {
+          "runtime": "decimal-test",
+          "tenant": "synthetic"
+        },
+        "scopeFingerprint": "sha256:eb9c1fcab218b5354344ee3db51b74d7eeb5e7a7ca1ea84352ebc5621dd78c9a",
+        "subjectId": "subject",
+        "meterId": "test.requests",
+        "meterVersion": 1,
+        "windowStart": "2026-09-05T11:59:00Z",
+        "windowEnd": "2026-09-05T12:00:00Z",
+        "value": "12",
+        "unit": "request",
+        "dimensions": {},
+        "dimensionFingerprint": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "source": "application",
+        "recordedAt": "2026-09-05T12:00:00Z",
+        "correctionOf": null,
+        "correctionReason": null,
+        "correlation": {
+          "requestId": "decimal-test"
+        },
+        "provenance": {},
+        "originalValue": "12.00",
+        "originalUnit": "request",
+        "fingerprint": "sha256:cc53211cdf8a38c8e16ec0c89ae77f7121f83d8316638ee3cd9bd71c5695d4d1"
+      },
+      "legacyReadbackFingerprint": "sha256:f74142b59db94991000ef0b94df0ac4b07cafa581b82ddf8ff6e749129c6adae",
+      "legacyFingerprintEqual": false,
+      "legacyReplay": "UsageConflict"
+    },
+    {
+      "name": "precision76",
+      "meter": {
+        "schemaVersion": "1.0.0",
+        "meterId": "test.requests",
+        "meterVersion": 1,
+        "quantity": "requests",
+        "canonicalUnit": "request",
+        "transforms": {
+          "request": {
+            "scale": "1",
+            "offset": "0"
+          }
+        },
+        "dimensions": [],
+        "precision": 76,
+        "scale": 18,
+        "eventTimeToleranceSeconds": 0,
+        "activeFrom": "1970-01-01T00:00:00Z",
+        "retiredAt": null,
+        "description": null,
+        "fingerprint": "sha256:bdf7e8404fcc970b16699ef08d6dc6676ba4e1784f6e8d54aa0f6bd9d215e476"
+      },
+      "input": {
+        "schemaVersion": "1.0.0",
+        "eventId": "precision76",
+        "idempotencyKey": "sha256:db2e17ef27e2e6ffbbb2e3fb955519384afa215851b8a1a1e83320c949fc7417",
+        "scope": {
+          "runtime": "decimal-test",
+          "tenant": "synthetic"
+        },
+        "scopeFingerprint": "sha256:eb9c1fcab218b5354344ee3db51b74d7eeb5e7a7ca1ea84352ebc5621dd78c9a",
+        "subjectId": "subject",
+        "meterId": "test.requests",
+        "meterVersion": 1,
+        "windowStart": "2026-09-05T11:59:00Z",
+        "windowEnd": "2026-09-05T12:00:00Z",
+        "value": "9999999999999999999999999999999999999999999999999999999999.999999999999999999",
+        "unit": "request",
+        "dimensions": {},
+        "dimensionFingerprint": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "source": "application",
+        "recordedAt": "2026-09-05T12:00:00Z",
+        "correctionOf": null,
+        "correctionReason": null,
+        "correlation": {
+          "requestId": "decimal-test"
+        },
+        "provenance": {},
+        "originalValue": null,
+        "originalUnit": null,
+        "fingerprint": "sha256:d56f1a42c18a21355e37e970ccff9d4c26417f436ac361043b22cd30b03cf8d4"
+      },
+      "normalized": {
+        "schemaVersion": "1.0.0",
+        "eventId": "precision76",
+        "idempotencyKey": "sha256:db2e17ef27e2e6ffbbb2e3fb955519384afa215851b8a1a1e83320c949fc7417",
+        "scope": {
+          "runtime": "decimal-test",
+          "tenant": "synthetic"
+        },
+        "scopeFingerprint": "sha256:eb9c1fcab218b5354344ee3db51b74d7eeb5e7a7ca1ea84352ebc5621dd78c9a",
+        "subjectId": "subject",
+        "meterId": "test.requests",
+        "meterVersion": 1,
+        "windowStart": "2026-09-05T11:59:00Z",
+        "windowEnd": "2026-09-05T12:00:00Z",
+        "value": "9999999999999999999999999999999999999999999999999999999999.999999999999999999",
+        "unit": "request",
+        "dimensions": {},
+        "dimensionFingerprint": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "source": "application",
+        "recordedAt": "2026-09-05T12:00:00Z",
+        "correctionOf": null,
+        "correctionReason": null,
+        "correlation": {
+          "requestId": "decimal-test"
+        },
+        "provenance": {},
+        "originalValue": "9999999999999999999999999999999999999999999999999999999999.999999999999999999",
+        "originalUnit": "request",
+        "fingerprint": "sha256:f6708c2b7c1627ed2fb826c9e022e017d8a2dfc49bf91848f9d5cea5630ac2be"
+      },
+      "legacyReadbackFingerprint": "sha256:f6708c2b7c1627ed2fb826c9e022e017d8a2dfc49bf91848f9d5cea5630ac2be",
+      "legacyFingerprintEqual": true,
+      "legacyReplay": "replayed"
+    },
+    {
+      "name": "original-digit-limit",
+      "meter": {
+        "schemaVersion": "1.0.0",
+        "meterId": "test.requests",
+        "meterVersion": 1,
+        "quantity": "requests",
+        "canonicalUnit": "request",
+        "transforms": {
+          "request": {
+            "scale": "1",
+            "offset": "0"
+          }
+        },
+        "dimensions": [],
+        "precision": 76,
+        "scale": 18,
+        "eventTimeToleranceSeconds": 0,
+        "activeFrom": "1970-01-01T00:00:00Z",
+        "retiredAt": null,
+        "description": null,
+        "fingerprint": "sha256:bdf7e8404fcc970b16699ef08d6dc6676ba4e1784f6e8d54aa0f6bd9d215e476"
+      },
+      "input": {
+        "schemaVersion": "1.0.0",
+        "eventId": "original-digit-limit",
+        "idempotencyKey": "sha256:6b6fafc48daac87382156d0ca8c99b0366c10f2a82866d1982ce5cb0b9b77f8d",
+        "scope": {
+          "runtime": "decimal-test",
+          "tenant": "synthetic"
+        },
+        "scopeFingerprint": "sha256:eb9c1fcab218b5354344ee3db51b74d7eeb5e7a7ca1ea84352ebc5621dd78c9a",
+        "subjectId": "subject",
+        "meterId": "test.requests",
+        "meterVersion": 1,
+        "windowStart": "2026-09-05T11:59:00Z",
+        "windowEnd": "2026-09-05T12:00:00Z",
+        "value": "0.000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "unit": "request",
+        "dimensions": {},
+        "dimensionFingerprint": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "source": "application",
+        "recordedAt": "2026-09-05T12:00:00Z",
+        "correctionOf": null,
+        "correctionReason": null,
+        "correlation": {
+          "requestId": "decimal-test"
+        },
+        "provenance": {},
+        "originalValue": null,
+        "originalUnit": null,
+        "fingerprint": "sha256:5abcb9f5a74f2c2f902c8a0d38745f57d4fda94e7a524fcb9de046646c582f07"
+      },
+      "normalized": {
+        "schemaVersion": "1.0.0",
+        "eventId": "original-digit-limit",
+        "idempotencyKey": "sha256:6b6fafc48daac87382156d0ca8c99b0366c10f2a82866d1982ce5cb0b9b77f8d",
+        "scope": {
+          "runtime": "decimal-test",
+          "tenant": "synthetic"
+        },
+        "scopeFingerprint": "sha256:eb9c1fcab218b5354344ee3db51b74d7eeb5e7a7ca1ea84352ebc5621dd78c9a",
+        "subjectId": "subject",
+        "meterId": "test.requests",
+        "meterVersion": 1,
+        "windowStart": "2026-09-05T11:59:00Z",
+        "windowEnd": "2026-09-05T12:00:00Z",
+        "value": "0.000000000000000001",
+        "unit": "request",
+        "dimensions": {},
+        "dimensionFingerprint": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "source": "application",
+        "recordedAt": "2026-09-05T12:00:00Z",
+        "correctionOf": null,
+        "correctionReason": null,
+        "correlation": {
+          "requestId": "decimal-test"
+        },
+        "provenance": {},
+        "originalValue": "0.000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "originalUnit": "request",
+        "fingerprint": "sha256:8b2d6b7d3b96a94f10774eae0eecd6ed8c7bdbe40b843e3174bdcac86fb72c4c"
+      },
+      "legacyReadbackFingerprint": "sha256:79a9dedfe50da46cb33f187bfc4c90b856dd8f78df798539e09059a6beaacd73",
+      "legacyFingerprintEqual": false,
+      "legacyReplay": "UsageConflict"
+    }
+  ]
+}

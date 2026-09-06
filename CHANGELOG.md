@@ -2,6 +2,14 @@
 
 All notable changes follow Semantic Versioning.
 
+## 1.0.3 - 2026-09-06
+
+- Recover v1 event decimal representations after numeric storage by authenticating
+  the complete original fingerprint, preserving event bytes and legacy replay.
+- Reject original quantities that cannot fit Decimal(76,18) before storage, and
+  make precision checks independent of the ambient Decimal context.
+- Add required real PostgreSQL and frozen 1.0.0/1.0.2 legacy compatibility gates.
+
 ## 1.0.2 - 2026-08-27
 
 - Restore the established PyPI distribution identity `meridian-plugin-usage`.

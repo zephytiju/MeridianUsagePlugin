@@ -24,6 +24,7 @@ from ._canonical import (
     unit_name,
     utc_datetime,
 )
+from ._decimal import restore_event_decimals, storage_decimal
 from .correlation import UsageCorrelation
 from .errors import (
     DecimalOverflow,
@@ -31,21 +32,11 @@ from .errors import (
     InactiveMeter,
     InvalidCorrection,
     InvalidUsage,
+    InvalidUsageResult,
     UnitMismatch,
 )
 
 _SCHEMA_VERSION = "1.0.0"
-
-
-def _storage_decimal(value: object, name: str) -> Decimal:
-    selected = decimal_value(value, name)
-    normalized = selected if selected.is_zero() else selected.normalize()
-    exponent = cast(int, normalized.as_tuple().exponent)
-    fractional_digits = max(0, -exponent)
-    integer_digits = 1 if normalized.is_zero() else max(1, normalized.adjusted() + 1)
-    if fractional_digits > 18 or integer_digits > 58:
-        raise DecimalOverflow(f"{name} must fit the released Decimal(76, 18) Usage schema")
-    return selected
 
 
 @dataclass(frozen=True, slots=True)
@@ -361,7 +352,7 @@ class MeterV1:
         return self._fit(transform.apply(decimal_value(value)))
 
     def _fit(self, value: Decimal) -> Decimal:
-        quantum = Decimal(1).scaleb(-self.scale)
+        quantum = Decimal((0, (1,), -self.scale))
         try:
             with localcontext() as context:
                 context.prec = max(100, self.precision + 20)
@@ -376,7 +367,7 @@ class MeterV1:
             raise DecimalOverflow(
                 f"Decimal value exceeds meter precision {self.precision} and scale {self.scale}"
             )
-        return Decimal(0).quantize(quantum) if quantized.is_zero() else quantized
+        return quantized
 
     @property
     def fingerprint(self) -> str:
@@ -581,13 +572,15 @@ class UsageEventV1:
             raise InactiveMeter(meter.ref)
         meter.validate_event_time(self.window, self.recorded_at)
         dimensions = meter.validate_dimensions(self.dimensions)
+        original = self.value if self.original_value is None else self.original_value
+        storage_decimal(original, "original_value")
         normalized = meter.normalize(self.value, self.unit)
         return replace(
             self,
             value=normalized,
             unit=meter.canonical_unit,
             dimensions=dimensions,
-            original_value=self.value if self.original_value is None else self.original_value,
+            original_value=original,
             original_unit=self.unit if self.original_unit is None else self.original_unit,
         )
 
@@ -652,7 +645,7 @@ class UsageEventV1:
         ):
             raise InvalidUsage("usage event scope, dimensions, or provenance has invalid shape")
         recorded_at = value.get("recordedAt", value["windowEnd"])
-        return cls(
+        event = cls(
             event_id=cast(str, value["eventId"]),
             scope=UsageScope(cast(Mapping[str, str], scope)),
             subject_id=cast(str, value["subjectId"]),
@@ -678,6 +671,17 @@ class UsageEventV1:
             ),
             original_unit=cast(str | None, value.get("originalUnit")),
         )
+        if "fingerprint" not in value:
+            return event
+        content = event.to_dict(include_fingerprint=False)
+        for key in ("schemaVersion", "idempotencyKey", "scopeFingerprint", "dimensionFingerprint"):
+            if key in value and value[key] != content[key]:
+                raise InvalidUsageResult(f"stored event {key} does not match its content")
+        expected = require_fingerprint(value["fingerprint"])
+        if event.fingerprint == expected:
+            return event
+        restored_value, restored_original = restore_event_decimals(content, expected)
+        return replace(event, value=restored_value, original_value=restored_original)
 
 
 UsageEvent = UsageEventV1
@@ -727,7 +731,7 @@ class UsageAggregateV1:
             "dimensions",
             string_map(self.dimensions, "aggregate dimensions", maximum_entries=32),
         )
-        object.__setattr__(self, "total", _storage_decimal(self.total, "aggregate total"))
+        object.__setattr__(self, "total", storage_decimal(self.total, "aggregate total"))
         if (
             isinstance(self.event_count, bool)
             or not isinstance(self.event_count, int)
