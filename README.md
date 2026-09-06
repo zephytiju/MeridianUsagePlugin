@@ -13,8 +13,11 @@ Meridian Expressions.
 ## Install
 
 ```console
-python -m pip install meridian-plugin-usage==1.0.2
+python -m pip install meridian-plugin-usage==1.0.3
 ```
+
+See [decimal replay compatibility](docs/decimal-replay.md) for the storage
+roundtrip fix, unchanged v1 event fingerprints and legacy verification.
 
 Python 3.12, 3.13, and 3.14 are supported. Runtime Meridian dependencies are
 exactly pinned to their compatible 1.0.0 releases.

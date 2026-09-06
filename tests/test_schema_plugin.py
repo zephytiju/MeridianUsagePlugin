@@ -112,7 +112,7 @@ def test_plugin_factory_manifest_and_entry_point() -> None:
     assert isinstance(factory, PluginFactory)
     manifest = factory.manifest()
     assert manifest.plugin_id == "usage"
-    assert manifest.plugin_version == "1.0.2"
+    assert manifest.plugin_version == "1.0.3"
     assert manifest.extensions["distribution"] == "meridian-plugin-usage"
     assert manifest.extensions["catalog"] == "structured"
     assert manifest.extensions["service"] == "false"

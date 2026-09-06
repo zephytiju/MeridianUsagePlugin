@@ -400,7 +400,11 @@ class UsageRepository:
             {"scopeFingerprint": selected_scope.fingerprint, "eventId": selected_id},
             identity=f"{selected_scope.fingerprint}/{selected_id}",
         )
-        return None if record is None else UsageEventV1.from_mapping(record)
+        if record is None:
+            return None
+        if "fingerprint" not in record:
+            raise InvalidUsageResult("stored event is missing its fingerprint")
+        return UsageEventV1.from_mapping(record)
 
     def _validate_correction(self, event: UsageEventV1) -> None:
         if event.correction_of is None:

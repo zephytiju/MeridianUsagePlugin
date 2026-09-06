@@ -12,6 +12,7 @@ from typing import cast
 
 import pytest
 
+from integration.postgres_backend import postgres_backend  # noqa: F401
 from meridian_storage import (
     ConflictError,
     Expression,

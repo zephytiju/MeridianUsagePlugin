@@ -1,7 +1,9 @@
 # Contributing
 
 Use Python 3.12 through 3.14. Create a virtual environment, install the exact
-test extra, and run:
+test extra, set `USAGE_TEST_POSTGRES_DSN` to an isolated PostgreSQL/PostGIS 16
+database as described in [decimal replay verification](docs/decimal-replay.md),
+and run:
 
     python -m pip install pip==26.2
     python -m pip install -e '.[test]'

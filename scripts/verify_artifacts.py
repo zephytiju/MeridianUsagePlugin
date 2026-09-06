@@ -56,7 +56,7 @@ def _verify_wheel(path: Path) -> dict[str, object]:
         names = tuple(sorted(archive.namelist()))
         dist_info = sorted({name.split("/", 1)[0] for name in names if ".dist-info/" in name})
         _require(
-            dist_info == ["meridian_plugin_usage-1.0.2.dist-info"],
+            dist_info == ["meridian_plugin_usage-1.0.3.dist-info"],
             "wheel must contain exactly one Usage distribution",
         )
         root = dist_info[0]
@@ -82,7 +82,7 @@ def _verify_wheel(path: Path) -> dict[str, object]:
         )
         metadata_value = BytesParser().parsebytes(archive.read(f"{root}/METADATA"))
         _require(metadata_value["Name"] == "meridian-plugin-usage", "name differs")
-        _require(metadata_value["Version"] == "1.0.2", "version differs")
+        _require(metadata_value["Version"] == "1.0.3", "version differs")
         _require(metadata_value["License-Expression"] == "Apache-2.0", "license differs")
         _require(
             SpecifierSet(metadata_value["Requires-Python"]) == SpecifierSet(">=3.12,<3.15"),
@@ -104,7 +104,7 @@ def _verify_sdist(path: Path) -> dict[str, object]:
         names = tuple(sorted(member.name for member in archive.getmembers()))
         prefixes = {PurePosixPath(name).parts[0] for name in names}
         _require(
-            prefixes == {"meridian_plugin_usage-1.0.2"},
+            prefixes == {"meridian_plugin_usage-1.0.3"},
             "sdist must contain exactly one project root",
         )
         prefix = next(iter(prefixes))
@@ -138,7 +138,7 @@ def main() -> None:
     evidence = {
         "formatVersion": "meridian.usage.artifacts.v1",
         "package": "meridian-plugin-usage",
-        "version": "1.0.2",
+        "version": "1.0.3",
         "artifacts": [_verify_wheel(wheels[0]), _verify_sdist(sdists[0])],
         "status": "passed",
     }
