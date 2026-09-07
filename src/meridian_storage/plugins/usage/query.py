@@ -109,6 +109,17 @@ def _logical_predicate(where: Mapping[str, object]) -> ValueExpression | None:
     return BooleanExpression("and", tuple(predicates))
 
 
+def _expression_predicates(where: Mapping[str, object]) -> dict[str, object]:
+    """Lower Usage operators to the released mapping-first Query syntax."""
+    result: dict[str, object] = {}
+    for name, value in where.items():
+        if not isinstance(value, Mapping):
+            result[name] = value
+            continue
+        result[name] = {f"${operator}": candidate for operator, candidate in value.items()}
+    return result
+
+
 def _records(data: object, maximum: int) -> tuple[Mapping[str, object], ...]:
     selected = data
     if isinstance(data, Mapping):
@@ -207,7 +218,7 @@ class UsageQuery:
     def expression(self) -> Expression:
         return StructuredCatalogSurface().query(
             resource=self.resource.to_dict(),
-            where=self.predicates,
+            where=_expression_predicates(self.predicates),
             select=self.select,
             order_by=tuple(item.to_dict() for item in self.order_by),
             limit=self.limit,

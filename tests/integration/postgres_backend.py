@@ -16,7 +16,13 @@ from meridian_storage.adapters.postgresql.descriptor import manifest
 from meridian_storage.adapters.postgresql.migration import MigrationExecutor
 from meridian_storage.adapters.postgresql.schema import SchemaCompiler
 from meridian_storage.evidence import EvidenceCatalogProvider
-from meridian_storage.plugins.usage import UsageResources, event_schema, meter_schema, usage_schemas
+from meridian_storage.plugins.usage import (
+    UsageResources,
+    UsageSchemaProvider,
+    event_schema,
+    meter_schema,
+    usage_schemas,
+)
 from meridian_storage.registry import (
     NamespaceDefinition,
     ResourceBundle,
@@ -74,8 +80,9 @@ class UsageTestSchemaProvider:
 
 
 class LiveBackend:
-    def __init__(self, dsn, *, include_state=False):
+    def __init__(self, dsn, *, include_state=False, default_provider=False):
         self.dsn = dsn
+        self.default_provider = default_provider
         values = conninfo_to_dict(dsn)
         self.secrets = LocalTestSecrets(
             {
@@ -83,7 +90,11 @@ class LiveBackend:
                 "credential": values.pop("password", "postgres"),
             }
         )
-        self.usage_provider = UsageTestSchemaProvider(include_state=include_state)
+        self.usage_provider = (
+            UsageSchemaProvider()
+            if default_provider
+            else UsageTestSchemaProvider(include_state=include_state)
+        )
         bundles = (self.usage_provider.load(),)
         all_resources = tuple(r for b in bundles for r in b.resources)
         schema_by_ref = {s.ref: s for b in bundles for s in b.schemas}
@@ -93,8 +104,8 @@ class LiveBackend:
             name = resource.ref.name
             doc = next(
                 d
-                for d in self.usage_provider.documents()
-                if getattr(USAGE_RESOURCES, d.ref.name) == resource.ref
+                for d in (usage_schemas() if default_provider else self.usage_provider.documents())
+                if d.to_core_definition().ref == resource.schema
             )
             definition = doc.to_dict()
             fields = []
@@ -257,7 +268,7 @@ class LiveBackend:
     def start(self):
         runtime = Meridian.from_config(
             self.config,
-            schema_providers=(self.usage_provider,),
+            schema_providers=() if self.default_provider else (self.usage_provider,),
             secret_resolver=self.secrets,
         )
         runtime.start()
@@ -290,5 +301,15 @@ def mode_backend():
     if not dsn:
         pytest.fail("USAGE_TEST_POSTGRES_DSN is required; live acceptance cannot be skipped")
     backend = LiveBackend(dsn, include_state=True)
+    yield backend
+    backend.close()
+
+
+@pytest.fixture(scope="session")
+def default_backend():
+    dsn = os.environ.get("USAGE_TEST_POSTGRES_DSN")
+    if not dsn:
+        pytest.fail("USAGE_TEST_POSTGRES_DSN is required")
+    backend = LiveBackend(dsn, default_provider=True)
     yield backend
     backend.close()

@@ -1,6 +1,6 @@
 # Compatibility
 
-Version 2.0.0 targets on Python 3.12 through 3.14 against these exact public
+Version 2.0.1 targets on Python 3.12 through 3.14 against these exact public
 releases:
 
 | Distribution | Version |
@@ -61,3 +61,24 @@ and authenticates the entire stored v1 fingerprint. It does not strip scale
 from newly published values or change arithmetic. Changed facts remain a
 conflict; malformed stored fingerprints are rejected. This retains legacy
 aggregate bytes as well as the unchanged Event recovery path.
+
+
+## 2.0.1 query and Resource activation compatibility
+
+The Usage API still accepts `gte`, `lt`, and the other documented Usage operators.
+Execution lowers these to Query 1.0.2's `$gte`, `$lt`, etc. Query operand interpretation remains identical to the existing logical plan,
+including its field-reference and escaped-dollar syntax; plan fingerprints are unchanged.
+The window remains start-inclusive and end-exclusive on `windowStart`.
+
+The default Event and Aggregate Resources now select the existing `time-series`
+profile declared by their unchanged 1.0.0 Schemas, instead of unsupported `usage`.
+Resource identities, labels, scope behavior, requirements, and relationships stay
+unchanged. Resource fingerprints for these two Resources and the provider bundle
+fingerprint change. Deployment composition must regenerate those pins and the
+corresponding binding layouts, then validate/activate through the existing adapter
+migration contract before startup. Startup performs no DDL or silent pin rewriting.
+A previously rejected default `usage` profile is not an active supported PostgreSQL
+layout. Deployments already using Schema-derived `time-series` layouts retain their
+logical identities and data; reconcile fingerprints through deployment activation.
+All Schema fingerprints, v1 event/aggregate encoding and decimal arithmetic, and
+the Usage 2.0.0 checkpoint/claim migration requirements above remain unchanged.
