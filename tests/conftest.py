@@ -12,7 +12,11 @@ from typing import cast
 
 import pytest
 
-from integration.postgres_backend import mode_backend, postgres_backend  # noqa: F401
+from integration.postgres_backend import (  # noqa: F401
+    default_backend,
+    mode_backend,
+    postgres_backend,
+)
 from meridian_storage import (
     ConflictError,
     Expression,
@@ -94,7 +98,9 @@ class MemoryExecutor:
                     return False
                 continue
             for operator, expected in predicate.items():
-                if not MemoryExecutor._operator_matches(actual, operator, expected):
+                if not MemoryExecutor._operator_matches(
+                    actual, operator.removeprefix("$"), expected
+                ):
                     return False
         return True
 

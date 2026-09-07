@@ -21,13 +21,13 @@ flowchart LR
 | Logical Resource | Record kind | Consistency | Typical placement capability |
 | --- | --- | --- | --- |
 | `structured:usage.meters` | Immutable meter versions | strong | conditional structured writes |
-| `structured:usage.events` | Immutable facts/corrections | eventual | append/query, Usage profile |
-| `structured:usage.aggregates` | Immutable aggregate versions | eventual | append/query, Usage profile |
+| `structured:usage.events` | Immutable facts/corrections | eventual | append/query, time-series profile |
+| `structured:usage.aggregates` | Immutable aggregate versions | eventual | append/query, time-series profile |
 | `structured:usage.batches` | Batch replay manifests | strong | conditional structured writes |
 | `structured:usage.checkpoints` | Watermark CAS records | strong | conditional structured writes |
 | `structured:usage.claims` | Leased worker claims | strong | conditional structured writes |
 
-The package owns no Catalog. `usage` is a namespace and record profile
+The package owns no Catalog. `usage` is a namespace and plugin label
 inside the registered `structured` Catalog.
 
 ## Boundary invariants

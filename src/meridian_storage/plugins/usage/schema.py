@@ -323,7 +323,7 @@ class UsageSchemaProvider:
             ),
             ResourceDefinition(
                 resources.events,
-                "usage",
+                documents["events"].semantic_kind.value,
                 definitions[1].ref,
                 labels={"plugin": "usage", "recordType": "event"},
                 requirements=_requirements("get", "put", "query"),
@@ -331,7 +331,7 @@ class UsageSchemaProvider:
             ),
             ResourceDefinition(
                 resources.aggregates,
-                "usage",
+                documents["aggregates"].semantic_kind.value,
                 definitions[2].ref,
                 labels={"plugin": "usage", "recordType": "aggregate"},
                 requirements=_requirements("get", "put", "query"),

@@ -1,6 +1,14 @@
 # Changelog
 
 
+## 2.0.1
+
+- Lower Usage query operators to released Query mapping predicates, preserving
+  scoped half-open windows, operand semantics, ordering, projection, and pagination.
+- Correct Event/Aggregate Resource profiles to their existing Schema-declared
+  `time-series` profile. All Schema definitions and data fingerprints are unchanged.
+- Verify default provider discovery and public repositories on real PostgreSQL.
+
 ## 2.0.0
 
 - Consume structured put 2.0.0 with explicit immutable creation; remove storage
