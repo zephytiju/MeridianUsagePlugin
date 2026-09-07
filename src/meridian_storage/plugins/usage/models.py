@@ -24,7 +24,7 @@ from ._canonical import (
     unit_name,
     utc_datetime,
 )
-from ._decimal import restore_event_decimals, storage_decimal
+from ._decimal import restore_aggregate_total, restore_event_decimals, storage_decimal
 from .correlation import UsageCorrelation
 from .errors import (
     DecimalOverflow,
@@ -813,7 +813,7 @@ class UsageAggregateV1:
         dimensions = value["dimensions"]
         if not isinstance(scope, Mapping) or not isinstance(dimensions, Mapping):
             raise InvalidUsage("aggregate scope or dimensions has invalid shape")
-        return cls(
+        aggregate = cls(
             aggregate_id=cast(str, value["aggregateId"]),
             revision=cast(int, value["aggregateRevision"]),
             scope=UsageScope(cast(Mapping[str, str], scope)),
@@ -833,6 +833,22 @@ class UsageAggregateV1:
             algorithm=cast(str, value.get("algorithm", "sum.v1")),
             correlation=UsageCorrelation.from_mapping(value.get("correlation")),
         )
+
+        if "fingerprint" not in value:
+            return aggregate
+        content = aggregate.to_dict(include_fingerprint=False)
+        for key in (
+            "schemaVersion",
+            "aggregateVersionId",
+            "scopeFingerprint",
+            "dimensionFingerprint",
+        ):
+            if key in value and value[key] != content[key]:
+                raise InvalidUsageResult(f"stored aggregate {key} does not match its content")
+        expected = require_fingerprint(value["fingerprint"])
+        if aggregate.fingerprint == expected:
+            return aggregate
+        return replace(aggregate, total=restore_aggregate_total(content, expected))
 
 
 UsageAggregate = UsageAggregateV1

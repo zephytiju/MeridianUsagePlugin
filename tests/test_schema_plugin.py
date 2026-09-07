@@ -19,6 +19,8 @@ from meridian_storage.plugins.usage import (
     UsageResources,
     UsageSchemaProvider,
     aggregate_schema,
+    checkpoint_schema,
+    claim_schema,
     event_schema,
     usage_schemas,
 )
@@ -74,7 +76,11 @@ def test_semantics_documents_round_trip_and_profiles_are_correct() -> None:
             definition=document.to_dict(),
         )
         assert restored == document
-        assert all(not field.mutable for field in document.fields)
+        mutable = {
+            "checkpoints": {"watermark", "revision", "updatedAt", "fingerprint"},
+            "claims": {"owner", "expiresAt", "revision", "updatedAt", "fingerprint"},
+        }.get(document.ref.name, set())
+        assert {field.name for field in document.fields if field.mutable} == mutable
         assert document.fingerprint.startswith("sha256:")
     assert isinstance(event_schema().profile, TimeSeriesProfile)
     assert isinstance(aggregate_schema().profile, TimeSeriesProfile)
@@ -112,7 +118,7 @@ def test_plugin_factory_manifest_and_entry_point() -> None:
     assert isinstance(factory, PluginFactory)
     manifest = factory.manifest()
     assert manifest.plugin_id == "usage"
-    assert manifest.plugin_version == "1.0.3"
+    assert manifest.plugin_version == "2.0.0"
     assert manifest.extensions["distribution"] == "meridian-plugin-usage"
     assert manifest.extensions["catalog"] == "structured"
     assert manifest.extensions["service"] == "false"
@@ -162,3 +168,25 @@ def test_resources_and_retention_are_logical_inputs_only() -> None:
             "usage-events",
             timedelta(0),
         )
+
+
+def test_versioned_state_schemas_preserve_published_v1_and_scope():
+    legacy = {
+        "checkpoints": "sha256:cf8bccd7d1c3b296fd413f5285b7671d55b3ca039d161524de4ce9a5af2e5ed3",
+        "claims": "sha256:22c23243c71d35b03491fd21353d5a41aa9f02ef3a2d72d75fb3f72c08888c73",
+    }
+    bundle = UsageSchemaProvider().load()
+    for factory in (checkpoint_schema, claim_schema):
+        old = factory(version="1.0.0")
+        new = factory()
+        assert old.fingerprint == legacy[old.ref.name]
+        assert old.to_core_definition() in bundle.schemas
+        assert new.to_core_definition() in bundle.schemas
+        assert new.ref.version == "2.0.0"
+        assert {field.name for field in old.fields} == {field.name for field in new.fields}
+        assert all(not field.mutable for field in old.fields)
+        assert all(
+            not field.mutable for field in new.fields if field.name in {*new.identity, "scope"}
+        )
+        with pytest.raises(ValueError, match="version"):
+            factory(version="3.0.0")

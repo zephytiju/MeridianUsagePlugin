@@ -278,11 +278,14 @@ def _single_record(data: object) -> Mapping[str, object] | None:
     return MappingProxyType(dict(selected))
 
 
-def _storage_version(record: Mapping[str, object] | None, fallback: int = 0) -> str | int:
-    if record is None:
-        return 0
-    value = record.get("_version", record.get("storageVersion", fallback))
-    if isinstance(value, bool) or not isinstance(value, str | int):
+def _storage_version(record: Mapping[str, object]) -> str | int:
+    value = record.get("recordVersion", record.get("_version", record.get("storageVersion")))
+    if (
+        isinstance(value, bool)
+        or not isinstance(value, str | int)
+        or value == ""
+        or (isinstance(value, int) and value < 0)
+    ):
         raise InvalidUsageResult("conditional Usage record returned an invalid version")
     return value
 
@@ -342,14 +345,38 @@ class UsageRepository:
         data: Mapping[str, object],
         *,
         identity: str,
-        expected_version: str | int | None = None,
     ) -> OperationResult:
         expression = self._surface.put(
             resource=resource.to_dict(),
             data=data,
-            expected_version=expected_version,
+            mode="if_absent",
         )
         return self._execute(expression, kind="put", identity=identity)
+
+    def _write_state(
+        self,
+        resource: ResourceRef,
+        data: Mapping[str, object],
+        record: Mapping[str, object] | None,
+        *,
+        identity_field: str,
+    ) -> OperationResult:
+        if record is None:
+            expression = self._surface.put(resource=resource.to_dict(), data=data, mode="if_absent")
+        else:
+            expression = self._surface.patch(
+                resource=resource.to_dict(),
+                where={name: data[name] for name in ("scopeFingerprint", identity_field)},
+                changes={
+                    name: value
+                    for name, value in data.items()
+                    if name not in {"scopeFingerprint", "scope", identity_field}
+                },
+                expected_version=_storage_version(record),
+            )
+        # The existing runtime owns replay. Different state transitions must not
+        # reuse the identity-only key of initialization or a previous revision.
+        return self._execute(expression, kind="state", identity=expression.fingerprint)
 
     def get_meter(self, meter_id: str, version: int) -> MeterV1:
         selected_id = logical_name(meter_id, "meter_id")
@@ -383,7 +410,6 @@ class UsageRepository:
                 self.resources.meters,
                 meter.to_dict(),
                 identity=meter.ref,
-                expected_version=0,
             )
         except ConflictError:
             persisted = self.get_meter(meter.meter_id, meter.version)
@@ -633,7 +659,6 @@ class UsageRepository:
                 self.resources.batches,
                 manifest,
                 identity=f"{scope.fingerprint}/{selected_batch_id}",
-                expected_version=0,
             )
         except ConflictError:
             persisted = self._batch_record(scope, selected_batch_id)
@@ -789,11 +814,11 @@ class UsageRepository:
             utc_datetime(now or datetime.now(UTC), "updated_at"),
         )
         try:
-            self._put(
+            self._write_state(
                 self.resources.checkpoints,
                 updated.to_dict(),
-                identity=f"{selected_scope.fingerprint}/{selected_id}",
-                expected_version=_storage_version(record, current_revision),
+                record,
+                identity_field="checkpointId",
             )
         except ConflictError as exc:
             raise CheckpointConflict(selected_id) from exc
@@ -847,13 +872,11 @@ class UsageRepository:
             selected_now,
         )
         try:
-            self._put(
+            self._write_state(
                 self.resources.claims,
                 claim.to_dict(),
-                identity=f"{selected_scope.fingerprint}/{selected_id}",
-                expected_version=_storage_version(
-                    record, 0 if current is None else current.revision
-                ),
+                record,
+                identity_field="claimId",
             )
         except ConflictError as exc:
             raise ClaimUnavailable(selected_id) from exc
@@ -875,7 +898,12 @@ class UsageRepository:
             identity=f"{claim.scope.fingerprint}/{claim.claim_id}",
         )
         current = None if record is None else AggregationClaim.from_mapping(record)
-        if current is None or current.revision != claim.revision or current.owner != claim.owner:
+        if (
+            record is None
+            or current is None
+            or current.revision != claim.revision
+            or current.owner != claim.owner
+        ):
             raise ClaimUnavailable(claim.claim_id)
         released = AggregationClaim(
             claim.claim_id,
@@ -886,11 +914,11 @@ class UsageRepository:
             selected_now,
         )
         try:
-            self._put(
+            self._write_state(
                 self.resources.claims,
                 released.to_dict(),
-                identity=f"{claim.scope.fingerprint}/{claim.claim_id}",
-                expected_version=_storage_version(record, current.revision),
+                record,
+                identity_field="claimId",
             )
         except ConflictError as exc:
             raise ClaimUnavailable(claim.claim_id) from exc

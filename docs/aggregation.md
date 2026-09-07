@@ -21,3 +21,13 @@ new revision is appended with `supersedes` naming the prior version.
 
 Claims and checkpoints are Usage library control records. They are not
 Projection outbox checkpoints and do not introduce a cache Catalog or service.
+
+
+Version 2.0.0 state writes initialize with `if_absent`; an existing state record
+uses conditional `structured.patch` with the returned storage version. Domain
+revision and storage version are separate counters. A stale initializer cannot
+reset a progressed checkpoint, and a stale owner cannot renew or release a
+newer claim. The default schema bundle activates checkpoint/claim schema 2.0.0
+and retains their exact 1.0.0 definitions. Upgrade existing deployments using
+the [state activation requirements](compatibility.md), preserving records and
+immutable identity/scope fields.

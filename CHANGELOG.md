@@ -1,5 +1,20 @@
 # Changelog
 
+
+## 2.0.0
+
+- Consume structured put 2.0.0 with explicit immutable creation; remove storage
+  version-zero creation. Use conditional patch and returned record versions for
+  existing checkpoint/claim transitions, with distinct internal request keys.
+- Publish state schemas 2.0.0 with only state fields mutable; retain original
+  1.0.0 schema definitions and immutable identity/scope. Deployment activation
+  updates pins/layouts without recreating or resetting state.
+- Preserve the 1.0.3 event decimal repair and v1 fingerprint bytes. Reuse bounded
+  equivalent-text recovery for aggregate totals, requiring full fingerprint
+  authentication after numeric storage.
+- Require the compatible released package set, including PostgreSQL 2.1.1 for
+  real-engine tests and timestamp-preserving readback.
+
 All notable changes follow Semantic Versioning.
 
 ## 1.0.3 - 2026-09-06

@@ -91,3 +91,13 @@ def restore_event_decimals(
             if digest.hexdigest() == expected:
                 return Decimal(cast(str, value)), None if original is None else Decimal(original)
     raise InvalidUsageResult("stored fingerprint does not match the complete event content")
+
+
+def restore_aggregate_total(content: Mapping[str, object], expected_fingerprint: object) -> Decimal:
+    """Reuse v1 equivalent decimal texts, authenticating the complete aggregate."""
+    expected = require_fingerprint(expected_fingerprint)
+    for total in _representations(content["total"], meter_value=False):
+        candidate = {**content, "total": total}
+        if "sha256:" + hashlib.sha256(canonical_bytes(candidate)).hexdigest() == expected:
+            return Decimal(cast(str, total))
+    raise InvalidUsageResult("stored fingerprint does not match the complete aggregate content")
