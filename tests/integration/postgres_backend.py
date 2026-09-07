@@ -16,7 +16,7 @@ from meridian_storage.adapters.postgresql.descriptor import manifest
 from meridian_storage.adapters.postgresql.migration import MigrationExecutor
 from meridian_storage.adapters.postgresql.schema import SchemaCompiler
 from meridian_storage.evidence import EvidenceCatalogProvider
-from meridian_storage.plugins.usage import UsageResources, event_schema, meter_schema
+from meridian_storage.plugins.usage import UsageResources, event_schema, meter_schema, usage_schemas
 from meridian_storage.registry import (
     NamespaceDefinition,
     ResourceBundle,
@@ -43,12 +43,18 @@ class UsageTestSchemaProvider:
     provider_id = "usage.decimal-test"
     provider_contract_version = "1.0.0"
 
+    def __init__(self, *, include_state=False):
+        self.include_state = include_state
+
+    def documents(self):
+        return usage_schemas() if self.include_state else (meter_schema(), event_schema())
+
     def load(self):
         # Published owning schemas; test deployment selects custom logical resources
         # through the public UsageResources contract. No schema/capability patching.
-        docs = (meter_schema(), event_schema())
+        docs = self.documents()
         schemas = tuple(d.to_core_definition() for d in docs)
-        refs = (USAGE_RESOURCES.meters, USAGE_RESOURCES.events)
+        refs = tuple(getattr(USAGE_RESOURCES, d.ref.name) for d in docs)
         return ResourceBundle(
             self.provider_id,
             "1.0.0",
@@ -68,7 +74,7 @@ class UsageTestSchemaProvider:
 
 
 class LiveBackend:
-    def __init__(self, dsn):
+    def __init__(self, dsn, *, include_state=False):
         self.dsn = dsn
         values = conninfo_to_dict(dsn)
         self.secrets = LocalTestSecrets(
@@ -77,7 +83,7 @@ class LiveBackend:
                 "credential": values.pop("password", "postgres"),
             }
         )
-        self.usage_provider = UsageTestSchemaProvider()
+        self.usage_provider = UsageTestSchemaProvider(include_state=include_state)
         bundles = (self.usage_provider.load(),)
         all_resources = tuple(r for b in bundles for r in b.resources)
         schema_by_ref = {s.ref: s for b in bundles for s in b.schemas}
@@ -85,7 +91,11 @@ class LiveBackend:
         layouts = []
         for resource in all_resources:
             name = resource.ref.name
-            doc = meter_schema() if name.endswith("meters") else event_schema()
+            doc = next(
+                d
+                for d in self.usage_provider.documents()
+                if getattr(USAGE_RESOURCES, d.ref.name) == resource.ref
+            )
             definition = doc.to_dict()
             fields = []
             for f in definition["fields"]:
@@ -135,7 +145,7 @@ class LiveBackend:
                     {
                         "name": p.catalog_name,
                         "package": p.manifest().package_name,
-                        "contract": "1.x",
+                        "contract": p.manifest().catalog_contract_version,
                         "requiredFingerprint": p.manifest().fingerprint,
                     }
                     for p in catalogs
@@ -270,5 +280,15 @@ def postgres_backend():
     if not dsn:
         pytest.fail("USAGE_TEST_POSTGRES_DSN is required; live acceptance cannot be skipped")
     backend = LiveBackend(dsn)
+    yield backend
+    backend.close()
+
+
+@pytest.fixture(scope="session")
+def mode_backend():
+    dsn = os.environ.get("USAGE_TEST_POSTGRES_DSN")
+    if not dsn:
+        pytest.fail("USAGE_TEST_POSTGRES_DSN is required; live acceptance cannot be skipped")
+    backend = LiveBackend(dsn, include_state=True)
     yield backend
     backend.close()

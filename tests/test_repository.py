@@ -16,6 +16,7 @@ from meridian_storage.plugins.usage import (
     ClaimUnavailable,
     InvalidCorrection,
     InvalidUsage,
+    InvalidUsageResult,
     MeterV1,
     RecordStatus,
     UsageAggregateV1,
@@ -364,3 +365,22 @@ def test_aggregate_versions_are_immutable_and_latest_is_selected(
     assert latest == revision_ten
     with pytest.raises(UsageConflict):
         repository.put_aggregate(replace(revised, total=Decimal("4000")))
+
+
+def test_checkpoint_uses_storage_version_independent_of_domain_revision(executor, scope):
+    repository = UsageRepository(executor)
+    now = datetime(2026, 9, 1, tzinfo=UTC)
+    repository.advance_checkpoint(scope, "versions", now, expected_revision=0, now=now)
+    stored = next(iter(executor.records["checkpoints"].values()))
+    stored["_version"] = 37
+    checkpoint = repository.advance_checkpoint(
+        scope, "versions", now + timedelta(hours=1), expected_revision=1, now=now
+    )
+    assert checkpoint.revision == 2
+    assert stored["_version"] == 38
+    stored.pop("_version")
+    with pytest.raises(InvalidUsageResult, match="version"):
+        repository.advance_checkpoint(
+            scope, "versions", now + timedelta(hours=2), expected_revision=2, now=now
+        )
+    assert stored["revision"] == 2

@@ -32,11 +32,11 @@ from meridian_storage.plugins.usage import (
 
 ROOT = Path(__file__).resolve().parents[1]
 EXPECTED_PINS = {
-    "meridian-plugin-observability": "==1.0.0",
-    "meridian-storage-core": "==1.0.0",
-    "meridian-storage-evidence": "==1.0.0",
-    "meridian-storage-query": "==1.0.0",
-    "meridian-storage-semantics": "==1.0.0",
+    "meridian-plugin-observability": "==1.0.2",
+    "meridian-storage-core": "==1.0.1",
+    "meridian-storage-evidence": "==1.0.1",
+    "meridian-storage-query": "==1.0.2",
+    "meridian-storage-semantics": "==2.0.0",
 }
 FORBIDDEN_IMPORTS = (
     "boto",
@@ -189,7 +189,10 @@ def main() -> None:
             "meridian-storage-semantics",
         )
     }
-    _require(set(installed_versions.values()) == {"1.0.0"}, "released versions differ")
+    _require(
+        installed_versions == {name: pin.removeprefix("==") for name, pin in EXPECTED_PINS.items()},
+        "released versions differ",
+    )
     pins = _distribution_pins()
     checked_source_files = _verify_import_boundary()
     _require(len(tuple(ROOT.glob("pyproject.toml"))) == 1, "repository must have one project")

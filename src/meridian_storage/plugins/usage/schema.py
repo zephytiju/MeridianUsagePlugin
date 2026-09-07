@@ -39,9 +39,10 @@ def _field(
     kind: LogicalKind | LogicalType,
     *,
     nullable: bool = False,
+    mutable: bool = False,
 ) -> FieldDefinition:
     logical_type = kind if isinstance(kind, LogicalType) else LogicalType(kind)
-    return FieldDefinition(name, logical_type, nullable=nullable, mutable=False)
+    return FieldDefinition(name, logical_type, nullable=nullable, mutable=mutable)
 
 
 def _document(
@@ -53,9 +54,10 @@ def _document(
     consistency: str,
     retention_label: str,
     indexes: tuple[IndexDefinition, ...] = (),
+    version: str = _CONTRACT_VERSION,
 ) -> SchemaDocument:
     return SchemaDocument(
-        ref=SchemaReference(CatalogName.STRUCTURED, "usage", name, _CONTRACT_VERSION),
+        ref=SchemaReference(CatalogName.STRUCTURED, "usage", name, version),
         semantic_kind=SemanticKind(profile.kind),
         fields=tuple(fields),
         identity=identity,
@@ -228,42 +230,52 @@ def batch_schema() -> SchemaDocument:
     )
 
 
-def checkpoint_schema() -> SchemaDocument:
+def _state_version(version: str) -> bool:
+    if version not in {"1.0.0", "2.0.0"}:
+        raise ValueError("Usage state schema version must be 1.0.0 or 2.0.0")
+    return version == "2.0.0"
+
+
+def checkpoint_schema(*, version: str = "2.0.0") -> SchemaDocument:
+    mutable = _state_version(version)
     return _document(
         "checkpoints",
         (
             _field("checkpointId", LogicalKind.STRING),
             _field("scope", LogicalKind.JSON),
             _field("scopeFingerprint", LogicalKind.STRING),
-            _field("watermark", LogicalKind.UTC_TIMESTAMP),
-            _field("revision", LogicalKind.INT64),
-            _field("updatedAt", LogicalKind.UTC_TIMESTAMP),
-            _field("fingerprint", LogicalKind.STRING),
+            _field("watermark", LogicalKind.UTC_TIMESTAMP, mutable=mutable),
+            _field("revision", LogicalKind.INT64, mutable=mutable),
+            _field("updatedAt", LogicalKind.UTC_TIMESTAMP, mutable=mutable),
+            _field("fingerprint", LogicalKind.STRING, mutable=mutable),
         ),
         ("scopeFingerprint", "checkpointId"),
         RelationalProfile(unique_fields=(("scopeFingerprint", "checkpointId"),)),
         consistency="strong",
         retention_label="usage-control",
+        version=version,
     )
 
 
-def claim_schema() -> SchemaDocument:
+def claim_schema(*, version: str = "2.0.0") -> SchemaDocument:
+    mutable = _state_version(version)
     return _document(
         "claims",
         (
             _field("claimId", LogicalKind.STRING),
             _field("scope", LogicalKind.JSON),
             _field("scopeFingerprint", LogicalKind.STRING),
-            _field("owner", LogicalKind.STRING),
-            _field("expiresAt", LogicalKind.UTC_TIMESTAMP),
-            _field("revision", LogicalKind.INT64),
-            _field("updatedAt", LogicalKind.UTC_TIMESTAMP),
-            _field("fingerprint", LogicalKind.STRING),
+            _field("owner", LogicalKind.STRING, mutable=mutable),
+            _field("expiresAt", LogicalKind.UTC_TIMESTAMP, mutable=mutable),
+            _field("revision", LogicalKind.INT64, mutable=mutable),
+            _field("updatedAt", LogicalKind.UTC_TIMESTAMP, mutable=mutable),
+            _field("fingerprint", LogicalKind.STRING, mutable=mutable),
         ),
         ("scopeFingerprint", "claimId"),
         RelationalProfile(unique_fields=(("scopeFingerprint", "claimId"),)),
         consistency="strong",
         retention_label="usage-control",
+        version=version,
     )
 
 
@@ -280,7 +292,10 @@ def usage_schemas() -> tuple[SchemaDocument, ...]:
 
 def _requirements(*methods: str) -> tuple[CapabilityRequirement, ...]:
     return tuple(
-        CapabilityRequirement(f"meridian.structured.{method}", "1.0.0") for method in methods
+        CapabilityRequirement(
+            f"meridian.structured.{method}", "2.0.0" if method == "put" else "1.0.0"
+        )
+        for method in methods
     )
 
 
@@ -335,7 +350,7 @@ class UsageSchemaProvider:
                 "relational",
                 definitions[4].ref,
                 labels={"plugin": "usage", "recordType": "checkpoint"},
-                requirements=_requirements("get", "put"),
+                requirements=_requirements("get", "put", "patch"),
                 related_resources=(resources.events, resources.aggregates),
             ),
             ResourceDefinition(
@@ -343,7 +358,7 @@ class UsageSchemaProvider:
                 "relational",
                 definitions[5].ref,
                 labels={"plugin": "usage", "recordType": "claim"},
-                requirements=_requirements("get", "put"),
+                requirements=_requirements("get", "put", "patch"),
                 related_resources=(resources.checkpoints,),
             ),
         )
@@ -358,7 +373,11 @@ class UsageSchemaProvider:
                     labels={"plugin": "usage", "lifecycleOwner": "platform"},
                 ),
             ),
-            schemas=definitions,
+            schemas=(
+                *definitions,
+                checkpoint_schema(version="1.0.0").to_core_definition(),
+                claim_schema(version="1.0.0").to_core_definition(),
+            ),
             resources=logical_resources,
             extensions={
                 "distribution": "meridian-plugin-usage",

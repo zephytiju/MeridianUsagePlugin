@@ -12,7 +12,7 @@ from typing import cast
 
 import pytest
 
-from integration.postgres_backend import postgres_backend  # noqa: F401
+from integration.postgres_backend import mode_backend, postgres_backend  # noqa: F401
 from meridian_storage import (
     ConflictError,
     Expression,
@@ -130,15 +130,20 @@ class MemoryExecutor:
             key = self._identity(resource.name, data)
             existing = table.get(key)
             expected = arguments.get("expectedVersion")
-            if expected is not None:
-                current_version = 0 if existing is None else cast(int, existing["_version"])
-                if expected != current_version:
-                    raise ConflictError("TEST_CAS_CONFLICT", "conditional write conflict")
-            elif existing is not None:
-                raise ConflictError("TEST_IMMUTABLE_CONFLICT", "immutable identity conflict")
+            mode = arguments["mode"]
+            if mode == "if_absent":
+                assert expected is None
+                if existing is not None:
+                    raise ConflictError("TEST_IMMUTABLE_CONFLICT", "immutable identity conflict")
+            elif mode == "update" and existing is None:
+                raise ConflictError("TEST_UPDATE_CONFLICT", "record does not exist")
+            if expected is not None and (existing is None or expected != existing["_version"]):
+                raise ConflictError("TEST_CAS_CONFLICT", "conditional write conflict")
             data["_version"] = 1 if existing is None else cast(int, existing["_version"]) + 1
             table[key] = data
             return self._result(expression, resource, {"record": data})
+        if expression.method == "patch":
+            return self._patch(expression, resource, table)
         if expression.method == "query":
             where = cast(Mapping[str, object], arguments["where"])
             records = [record for record in table.values() if self._matches(record, where)]
@@ -163,6 +168,20 @@ class MemoryExecutor:
                 {"items": page, "cursor": next_cursor},
             )
         raise AssertionError(f"unsupported test Expression {expression.method!r}")
+
+    def _patch(self, expression, resource, table):
+        arguments = expression.arguments
+        where = cast(Mapping[str, object], arguments["where"])
+        changes = cast(dict[str, object], _thaw(arguments["changes"]))
+        matches = [record for record in table.values() if self._matches(record, where)]
+        expected = arguments["expectedVersion"]
+        if not matches or any(record["_version"] != expected for record in matches):
+            raise ConflictError("TEST_CAS_CONFLICT", "conditional patch conflict")
+        assert not {"scope", "scopeFingerprint", "checkpointId", "claimId"} & changes.keys()
+        for record in matches:
+            record.update(changes)
+            record["_version"] = cast(int, record["_version"]) + 1
+        return self._result(expression, resource, matches)
 
     @contextmanager
     def transaction(self, resource: ResourceRef) -> Iterator[object]:

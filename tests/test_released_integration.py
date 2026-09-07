@@ -21,17 +21,17 @@ from meridian_storage.semantics import StructuredCatalogProvider, StructuredCata
 
 
 def test_distribution_uses_only_exact_released_runtime_contracts() -> None:
-    assert version("meridian-plugin-usage") == "1.0.3"
+    assert version("meridian-plugin-usage") == "2.0.0"
     project = metadata("meridian-plugin-usage")
     assert project["License-Expression"] == "Apache-2.0"
     dependencies = requires("meridian-plugin-usage") or []
     runtime = {item for item in dependencies if "extra ==" not in item}
     assert runtime == {
-        "meridian-plugin-observability==1.0.0",
-        "meridian-storage-core==1.0.0",
-        "meridian-storage-evidence==1.0.0",
-        "meridian-storage-query==1.0.0",
-        "meridian-storage-semantics==1.0.0",
+        "meridian-plugin-observability==1.0.2",
+        "meridian-storage-core==1.0.1",
+        "meridian-storage-evidence==1.0.1",
+        "meridian-storage-query==1.0.2",
+        "meridian-storage-semantics==2.0.0",
     }
 
 
@@ -64,11 +64,13 @@ def test_mapping_first_put_normalizes_without_adapter_concepts(
     expression = StructuredCatalogSurface().put(
         resource=resources.meters.to_dict(),
         data=meter.to_dict(),
-        expected_version=0,
+        mode="if_absent",
     )
     operation = StructuredCatalogProvider().normalize(expression)
     assert operation.operation_contract == "meridian.structured.put"
-    assert operation.input["expectedVersion"] == 0
+    assert operation.operation_version == "2.0.0"
+    assert operation.input["mode"] == "if_absent"
+    assert "expectedVersion" not in operation.input
     assert "adapter" not in str(operation.to_dict()).lower()
     assert "engine" not in str(operation.to_dict()).lower()
     event_expression = StructuredCatalogSurface().put(
