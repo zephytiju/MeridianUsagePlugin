@@ -28,8 +28,20 @@ jobs:
         options: >-
           --health-cmd "pg_isready -U postgres -d usage_test"
           --health-interval 5s --health-timeout 5s --health-retries 12
+      clickhouse:
+        image: clickhouse/clickhouse-server@sha256:0152dd511befe6a2c2ef53e930726179669b08116da78500b37c51c96ff5ee77
+        env:
+          CLICKHOUSE_USER: usage
+          CLICKHOUSE_PASSWORD: usage-test
+          CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: "1"
+        ports: ["8123:8123"]
+        options: >-
+          --health-cmd "clickhouse-client --user usage --password usage-test --query 'SELECT 1'"
+          --health-interval 5s --health-timeout 5s --health-retries 12
     env:
       USAGE_TEST_POSTGRES_DSN: postgresql://postgres:postgres@127.0.0.1:5432/usage_test
+      USAGE_TEST_CLICKHOUSE_PORT: "8123"
+      USAGE_TEST_CLICKHOUSE_RELEASE: "25.8"
     strategy:
       fail-fast: false
       matrix:
@@ -40,10 +52,12 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
           cache: pip
-          cache-dependency-path: pyproject.toml
+          cache-dependency-path: requirements-release.txt
       - run: python -m pip install --disable-pip-version-check pip==26.2
-      - name: Install exact development dependencies
-        run: python -m pip install --disable-pip-version-check -e '.[test]'
+      - name: Install exact public validation dependencies
+        run: python -m pip install --require-hashes -r requirements-release.txt
+      - run: python -m pip install --disable-pip-version-check -e '.[test]'
+      - run: python -m pip check
       - name: Verify source
         run: |
           ruff format --check .
@@ -104,9 +118,11 @@ jobs:
         with:
           python-version: "3.13"
           cache: pip
-          cache-dependency-path: pyproject.toml
+          cache-dependency-path: requirements-release.txt
       - run: python -m pip install --disable-pip-version-check pip==26.2
+      - run: python -m pip install --require-hashes -r requirements-release.txt
       - run: python -m pip install --disable-pip-version-check -e '.[test]'
+      - run: python -m pip check
       - run: bandit -r src -c pyproject.toml
       - run: pip-audit --skip-editable
 
@@ -122,9 +138,11 @@ jobs:
         with:
           python-version: "3.13"
           cache: pip
-          cache-dependency-path: pyproject.toml
+          cache-dependency-path: requirements-release.txt
       - run: python -m pip install --disable-pip-version-check pip==26.2
+      - run: python -m pip install --require-hashes -r requirements-release.txt
       - run: python -m pip install --disable-pip-version-check -e '.[test]'
+      - run: python -m pip check
       - name: Build twice
         run: |
           python -m build --no-isolation --outdir dist-a
@@ -137,7 +155,7 @@ jobs:
           cd dist-a && sha256sum meridian_plugin_usage-* > SHA256SUMS
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: meridian-plugin-usage-2.0.1
+          name: meridian-plugin-usage-2.0.2
           path: dist-a/
           if-no-files-found: error
           retention-days: 30

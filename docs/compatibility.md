@@ -1,18 +1,62 @@
 # Compatibility
 
-Version 2.0.1 targets on Python 3.12 through 3.14 against these exact public
-releases:
+## 2.0.2 public dependency repair
 
-| Distribution | Version |
-| --- | --- |
-| `meridian-storage-core` | 1.0.1 |
-| `meridian-storage-semantics` | 2.0.0 |
-| `meridian-storage-query` | 1.0.2 |
-| `meridian-storage-evidence` | 1.0.1 |
-| `meridian-plugin-observability` | 1.0.2 |
+Usage 2.0.2 supports Python 3.12–3.14. Runtime requirements describe the public API
+families needed by this plugin. They are separate from the exact deployment-selected
+validation recipe in `requirements-release.in` and its complete public artifact hash
+lock, `requirements-release.txt`.
 
-ClickHouse 1.0.1 is an integration-test extra. Runtime source does not import
-it and is portable across compatible structured placements.
+| Distribution | API compatibility bound | Validation release | Reason for minimum |
+| --- | --- | --- | --- |
+| `meridian-storage-core` | `>=1.1.0,<2` | 1.1.0 | Released runtime/SPI and required Evidence contract |
+| `meridian-storage-semantics` | `>=2.0.1,<3` | 2.0.1 | Explicit structured put 2.0 and normally installable Core closure |
+| `meridian-storage-query` | `>=1.0.3,<2` | 1.0.3 | Public query normalization and compatible dependency metadata |
+| `meridian-storage-evidence` | `>=1.0.2,<2` | 1.0.2 | Atomic append contract and Core 1.1 dependency closure |
+| `meridian-plugin-observability` | `>=1.0.3,<2` | 1.0.3 | Existing provider/correlation API and compatible closure |
+| `meridian-storage-postgresql` (test extra) | `>=2.2.0,<3` | 2.2.0 | Released descriptor/probe and atomic Evidence repair |
+| `meridian-storage-clickhouse` (test extra) | `>=1.1.1,<2` | 1.1.1 | Released query cursor and dependency repairs |
+
+Upper bounds preserve the existing public API major families. They do not certify
+untested releases. The lower bounds select the repaired public closure; a historical
+exact package recipe is not an operation contract. Both adapters remain test extras;
+Usage runtime source imports neither. No overrides, sibling source imports, or
+`--no-deps` installs are used.
+
+Reproduce the selected validation environment with:
+
+```console
+uv pip compile pyproject.toml requirements-release.in --extra test --universal --generate-hashes -o requirements-release.txt
+python -m pip install --require-hashes -r requirements-release.txt
+python -m pip install -e '.[test]'
+python -m pip check
+```
+
+The lock records public wheel/sdist hashes for each resolved dependency, including
+Projection 1.0.3 and OTel 1.44.0. CI and release jobs install it with hash verification,
+then resolve Usage normally and run package checks. Deployment owners may select
+other compatible releases and must validate their own exact closure.
+
+No Usage record, Schema, public API, structured-write choice, arithmetic or duplicate
+handling changes. The schema-provider bundle fingerprint changes with the package
+version; deployment owners must regenerate that pin. All Event, Meter, Aggregate and
+Schema golden fingerprints are unchanged. The packaged informational compatibility
+manifest is explicitly versioned as `meridian.usage.compatibility.v2`: `dependencies`
+contains distribution ranges and `contracts` contains actual API/Schema contract
+identifiers. This does not change persisted records or runtime configuration formats.
+
+The required live suite includes PostgreSQL/PostGIS immutable retries, decimals,
+corrections, concurrent registration, checkpoint races and default Resource queries.
+It adds explicit same-Binding Usage/Event + required Evidence commit/rollback and
+restart/replay checks. An external consumer copies only committed Evidence receipts
+to real ClickHouse, exercising append retry, keyset pagination, scope isolation,
+unbounded-query rejection and transaction rejection; the serialized public Usage
+record and its decimal fingerprint survive the complete path. ClickHouse is an
+Evidence consumer and does not gain authoritative conditional Usage write guarantees.
+Engine images are pinned by digest in both CI and publication workflows. Only the
+combinations actually tested are verified.
+
+## Historical design and migration context
 
 Locked design evidence:
 
@@ -29,7 +73,7 @@ The authoritative Usage LLD retains the public distribution name
 `meridian-plugin-usage`. The stable import namespace remains
 `meridian_storage.plugins.usage`.
 
-PostgreSQL 2.1.1 is the real-engine test dependency. This release consumes the
+The 2.0.0/2.0.1 recipe used PostgreSQL 2.1.1. Usage still consumes the
 structured put 2.0.0 contract: immutable records use explicit `if_absent`, while
 existing checkpoint and claim transitions use conditional `structured.patch` with the storage
 version returned by Meridian. Initial state uses `if_absent` without a version;

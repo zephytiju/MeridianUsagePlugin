@@ -16,12 +16,12 @@ from pathlib import Path, PurePosixPath
 
 from packaging.specifiers import SpecifierSet
 
-EXPECTED_PINS = {
-    "meridian-plugin-observability==1.0.2",
-    "meridian-storage-core==1.0.1",
-    "meridian-storage-evidence==1.0.1",
-    "meridian-storage-query==1.0.2",
-    "meridian-storage-semantics==2.0.0",
+EXPECTED_REQUIREMENTS = {
+    "meridian-plugin-observability<2,>=1.0.3",
+    "meridian-storage-core<2,>=1.1.0",
+    "meridian-storage-evidence<2,>=1.0.2",
+    "meridian-storage-query<2,>=1.0.3",
+    "meridian-storage-semantics<3,>=2.0.1",
 }
 
 
@@ -56,7 +56,7 @@ def _verify_wheel(path: Path) -> dict[str, object]:
         names = tuple(sorted(archive.namelist()))
         dist_info = sorted({name.split("/", 1)[0] for name in names if ".dist-info/" in name})
         _require(
-            dist_info == ["meridian_plugin_usage-2.0.1.dist-info"],
+            dist_info == ["meridian_plugin_usage-2.0.2.dist-info"],
             "wheel must contain exactly one Usage distribution",
         )
         root = dist_info[0]
@@ -82,19 +82,22 @@ def _verify_wheel(path: Path) -> dict[str, object]:
         )
         metadata_value = BytesParser().parsebytes(archive.read(f"{root}/METADATA"))
         _require(metadata_value["Name"] == "meridian-plugin-usage", "name differs")
-        _require(metadata_value["Version"] == "2.0.1", "version differs")
+        _require(metadata_value["Version"] == "2.0.2", "version differs")
         _require(metadata_value["License-Expression"] == "Apache-2.0", "license differs")
         _require(
             SpecifierSet(metadata_value["Requires-Python"]) == SpecifierSet(">=3.12,<3.15"),
             "Python range differs",
         )
-        runtime_pins = {
+        runtime_requirements = {
             value
             for value in metadata_value.get_all("Requires-Dist", [])
             if value.startswith(("meridian-storage-", "meridian-plugin-observability"))
             and "; extra ==" not in value
         }
-        _require(runtime_pins == EXPECTED_PINS, "wheel runtime pins differ")
+        _require(
+            runtime_requirements == EXPECTED_REQUIREMENTS,
+            "wheel runtime compatibility requirements differ",
+        )
         _verify_record(archive, f"{root}/RECORD")
     return {"file": path.name, "sha256": _sha256(path), "entries": len(names)}
 
@@ -104,7 +107,7 @@ def _verify_sdist(path: Path) -> dict[str, object]:
         names = tuple(sorted(member.name for member in archive.getmembers()))
         prefixes = {PurePosixPath(name).parts[0] for name in names}
         _require(
-            prefixes == {"meridian_plugin_usage-2.0.1"},
+            prefixes == {"meridian_plugin_usage-2.0.2"},
             "sdist must contain exactly one project root",
         )
         prefix = next(iter(prefixes))
@@ -138,7 +141,7 @@ def main() -> None:
     evidence = {
         "formatVersion": "meridian.usage.artifacts.v1",
         "package": "meridian-plugin-usage",
-        "version": "2.0.1",
+        "version": "2.0.2",
         "artifacts": [_verify_wheel(wheels[0]), _verify_sdist(sdists[0])],
         "status": "passed",
     }

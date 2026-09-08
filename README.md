@@ -13,7 +13,7 @@ Meridian Expressions.
 ## Install
 
 ```console
-python -m pip install meridian-plugin-usage==2.0.1
+python -m pip install meridian-plugin-usage==2.0.2
 ```
 
 See [decimal replay compatibility](docs/decimal-replay.md) for the storage

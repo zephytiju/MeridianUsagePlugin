@@ -1,15 +1,16 @@
 {
   "$comment": "SPDX-License-Identifier: Apache-2.0",
-  "formatVersion": "meridian.usage.compatibility.v1",
+  "formatVersion": "meridian.usage.compatibility.v2",
   "package": "meridian-plugin-usage",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "python": ">=3.12,<3.15",
   "contracts": {
-    "core": "1.0.1",
-    "semantics": "2.0.0",
-    "query": "1.0.2",
-    "evidence": "1.0.1",
-    "observability": "1.0.2"
+    "core": "1.x",
+    "plugin": "1.0.0",
+    "structuredPut": "2.0.0",
+    "queryOperation": "1.0.0",
+    "usageRecords": "1.0.0",
+    "mutableStateSchemas": "2.0.0"
   },
   "catalogs": {
     "owned": [],
@@ -33,5 +34,12 @@
     "credentials": false,
     "nativeQuery": false,
     "costOrPricing": false
+  },
+  "dependencies": {
+    "meridian-storage-core": ">=1.1.0,<2",
+    "meridian-storage-evidence": ">=1.0.2,<2",
+    "meridian-storage-query": ">=1.0.3,<2",
+    "meridian-storage-semantics": ">=2.0.1,<3",
+    "meridian-plugin-observability": ">=1.0.3,<2"
   }
 }
