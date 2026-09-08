@@ -14,6 +14,7 @@ from typing import Any
 
 from jsonschema import Draft202012Validator
 from packaging.requirements import Requirement
+from packaging.specifiers import SpecifierSet
 
 from meridian_storage.plugins.usage import (
     DimensionSpec,
@@ -31,12 +32,12 @@ from meridian_storage.plugins.usage import (
 )
 
 ROOT = Path(__file__).resolve().parents[1]
-EXPECTED_PINS = {
-    "meridian-plugin-observability": "==1.0.2",
-    "meridian-storage-core": "==1.0.1",
-    "meridian-storage-evidence": "==1.0.1",
-    "meridian-storage-query": "==1.0.2",
-    "meridian-storage-semantics": "==2.0.0",
+EXPECTED_REQUIREMENTS = {
+    "meridian-plugin-observability": "<2,>=1.0.3",
+    "meridian-storage-core": "<2,>=1.1.0",
+    "meridian-storage-evidence": "<2,>=1.0.2",
+    "meridian-storage-query": "<2,>=1.0.3",
+    "meridian-storage-semantics": "<3,>=2.0.1",
 }
 FORBIDDEN_IMPORTS = (
     "boto",
@@ -60,14 +61,16 @@ def _load_json(path: Path) -> dict[str, Any]:
     return value
 
 
-def _distribution_pins() -> dict[str, str]:
+def _distribution_requirements() -> dict[str, str]:
     distribution = metadata.distribution("meridian-plugin-usage")
     result: dict[str, str] = {}
     for raw in distribution.requires or ():
         requirement = Requirement(raw)
-        if requirement.name in EXPECTED_PINS and requirement.marker is None:
+        if requirement.name in EXPECTED_REQUIREMENTS and requirement.marker is None:
             result[requirement.name] = str(requirement.specifier)
-    _require(result == EXPECTED_PINS, f"released Meridian pins differ: {result!r}")
+    _require(
+        result == EXPECTED_REQUIREMENTS, f"Meridian compatibility requirements differ: {result!r}"
+    )
     return result
 
 
@@ -153,6 +156,15 @@ def main() -> None:
         .read_text(encoding="utf-8")
     )
     compatibility = json.loads(compatibility_text)
+    _require(
+        compatibility["formatVersion"] == "meridian.usage.compatibility.v2",
+        "informational compatibility format differs",
+    )
+    _require(
+        {name: str(SpecifierSet(bound)) for name, bound in compatibility["dependencies"].items()}
+        == EXPECTED_REQUIREMENTS,
+        "packaged compatibility bounds differ from distribution metadata",
+    )
     schema = _load_json(ROOT / "contracts" / "usage-plugin.v1.json")
     contract_path = ROOT / "contracts" / "conformance" / "plugin-contract.json"
     contract = _load_json(contract_path)
@@ -190,10 +202,13 @@ def main() -> None:
         )
     }
     _require(
-        installed_versions == {name: pin.removeprefix("==") for name, pin in EXPECTED_PINS.items()},
-        "released versions differ",
+        all(
+            version in SpecifierSet(EXPECTED_REQUIREMENTS[name])
+            for name, version in installed_versions.items()
+        ),
+        "installed releases violate required public API bounds",
     )
-    pins = _distribution_pins()
+    requirements = _distribution_requirements()
     checked_source_files = _verify_import_boundary()
     _require(len(tuple(ROOT.glob("pyproject.toml"))) == 1, "repository must have one project")
     _require(
@@ -214,7 +229,7 @@ def main() -> None:
             "goldenSha256": hashlib.sha256(golden_path.read_bytes()).hexdigest(),
         },
         "installedVersions": installed_versions,
-        "pins": pins,
+        "requirements": requirements,
         "sourceFilesChecked": checked_source_files,
         "status": "passed",
     }

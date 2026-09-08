@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.0.2 — 2026-09-08
+
+- Replace historical exact Meridian runtime dependencies with justified public API
+  compatibility bounds and an independent, complete public artifact hash lock.
+- Validate Core 1.1.0, Semantics 2.0.1, Query 1.0.3, Evidence 1.0.2,
+  Observability 1.0.3, PostgreSQL 2.2.0 and ClickHouse 1.1.1 without overrides.
+- Require real Usage/Evidence atomic commit, rollback and restart replay plus
+  ClickHouse receipt retry, paging, isolation and retained capability failures.
+- Preserve record/Schema fingerprints and structured write semantics. Only the
+  package-version-bearing bundle fingerprint changes; informational compatibility
+  metadata v2 separates package ranges from API contract identifiers.
+
 
 ## 2.0.1
 

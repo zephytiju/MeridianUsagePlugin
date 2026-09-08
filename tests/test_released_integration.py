@@ -20,18 +20,18 @@ from meridian_storage.query import QueryOperation
 from meridian_storage.semantics import StructuredCatalogProvider, StructuredCatalogSurface
 
 
-def test_distribution_uses_only_exact_released_runtime_contracts() -> None:
-    assert version("meridian-plugin-usage") == "2.0.1"
+def test_distribution_declares_public_api_compatibility_bounds() -> None:
+    assert version("meridian-plugin-usage") == "2.0.2"
     project = metadata("meridian-plugin-usage")
     assert project["License-Expression"] == "Apache-2.0"
     dependencies = requires("meridian-plugin-usage") or []
     runtime = {item for item in dependencies if "extra ==" not in item}
     assert runtime == {
-        "meridian-plugin-observability==1.0.2",
-        "meridian-storage-core==1.0.1",
-        "meridian-storage-evidence==1.0.1",
-        "meridian-storage-query==1.0.2",
-        "meridian-storage-semantics==2.0.0",
+        "meridian-plugin-observability<2,>=1.0.3",
+        "meridian-storage-core<2,>=1.1.0",
+        "meridian-storage-evidence<2,>=1.0.2",
+        "meridian-storage-query<2,>=1.0.3",
+        "meridian-storage-semantics<3,>=2.0.1",
     }
 
 

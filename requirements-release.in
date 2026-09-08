@@ -1,0 +1,9 @@
+# Deployment-selected validation recipe; not runtime compatibility gates.
+meridian-storage-core==1.1.0
+meridian-storage-semantics==2.0.1
+meridian-storage-query==1.0.3
+meridian-storage-evidence==1.0.2
+meridian-plugin-observability==1.0.3
+meridian-storage-clickhouse==1.1.1
+meridian-storage-postgresql==2.2.0
+meridian-storage-projection==1.0.3

@@ -10,6 +10,7 @@ import pytest
 from psycopg import connect, sql
 from psycopg.conninfo import conninfo_to_dict, make_conninfo
 
+from integration.evidence_support import ReceiptSchemaProvider
 from meridian_storage import Meridian, RuntimeConfig
 from meridian_storage.adapters.postgresql._settings import PostgreSQLSettings
 from meridian_storage.adapters.postgresql.descriptor import manifest
@@ -80,7 +81,7 @@ class UsageTestSchemaProvider:
 
 
 class LiveBackend:
-    def __init__(self, dsn, *, include_state=False, default_provider=False):
+    def __init__(self, dsn, *, include_state=False, default_provider=False, evidence=False):
         self.dsn = dsn
         self.default_provider = default_provider
         values = conninfo_to_dict(dsn)
@@ -95,18 +96,19 @@ class LiveBackend:
             if default_provider
             else UsageTestSchemaProvider(include_state=include_state)
         )
-        bundles = (self.usage_provider.load(),)
+        self.extra_providers = (ReceiptSchemaProvider(),) if evidence else ()
+        bundles = (self.usage_provider.load(), *(p.load() for p in self.extra_providers))
+        documents = (
+            *(usage_schemas() if default_provider else self.usage_provider.documents()),
+            *(d for p in self.extra_providers for d in p.documents()),
+        )
         all_resources = tuple(r for b in bundles for r in b.resources)
         schema_by_ref = {s.ref: s for b in bundles for s in b.schemas}
         self.namespace = "usage_decimal_" + uuid4().hex[:12]
         layouts = []
         for resource in all_resources:
             name = resource.ref.name
-            doc = next(
-                d
-                for d in (usage_schemas() if default_provider else self.usage_provider.documents())
-                if d.to_core_definition().ref == resource.schema
-            )
+            doc = next(d for d in documents if d.to_core_definition().ref == resource.schema)
             definition = doc.to_dict()
             fields = []
             for f in definition["fields"]:
@@ -268,7 +270,10 @@ class LiveBackend:
     def start(self):
         runtime = Meridian.from_config(
             self.config,
-            schema_providers=() if self.default_provider else (self.usage_provider,),
+            schema_providers=(
+                *(() if self.default_provider else (self.usage_provider,)),
+                *self.extra_providers,
+            ),
             secret_resolver=self.secrets,
         )
         runtime.start()
